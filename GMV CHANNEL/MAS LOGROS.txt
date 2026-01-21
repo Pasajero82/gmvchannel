@@ -1,0 +1,89 @@
+"No es solo una página de videos; es una plataforma de contenido inmersivo donde cada minuto que pasas dentro cuenta para subir tu rango y dejar tu marca."
+
+
+TRENDSETTER: Visit 5 artist social links.
+
+MARATHON RUNNER: Watch GMV for 30 minutes straight.
+
+LOYAL CITIZEN: Reach a 15-day login streak.
+
+SYSTEM HACKER: Review Stats and Achievements in one session.
+
+AD-DICT: Watch 5 full commercials.
+
+DEEP FILES: L1: Unlock the 1st classified video.
+
+DEEP FILES: L2: Unlock the 2nd classified video.
+
+DEEP FILES: L3: Unlock the 3rd classified video.
+
+MIDNIGHT PROTOCOL: Watch 3 videos during late night hours.
+
+COMPLETIONIST: Watch 50 full videos without skipping.
+
+
+--------------------------------------------------------
+
+
+SOLICITUD DE IMPLEMENTACIÓN: SISTEMA DE RANGOS, PERSISTENCIA HISTÓRICA Y BACKUP POR TOKEN
+Hola, necesito implementar un sistema de progresión permanente en mi Plataforma. Actualmente tengo logros mensuales que se reinician, pero quiero añadir una capa de "Estatus de Veterano" que sea acumulativa, persistente y recuperable mediante un sistema de Backup.
+
+Por favor, sigue estas especificaciones técnicas:
+
+1. Motor de Niveles y Rangos (Persistencia Histórica)
+Variable Maestra: Crea/usa una propiedad llamada totalAchievements dentro de mi objeto de estadísticas (statsData). Esta variable debe acumular todos los logros conseguidos históricamente (no se resetea al mes).
+
+Lógica de Rangos: Define una función que calcule el Rango actual basado en totalAchievements:
+
+0-14 logros: SIGNAL NOVICE
+
+15-29 logros: DATA RUNNER
+
+30-59 logros: SYSTEM ARCHITECT
+
+60+ logros: GHOST IN THE SHELL
+
+Actualización: Cada vez que se complete un logro, suma +1 al marcador mensual y +1 al totalAchievements.
+
+2. Integración en UI y Muro de Señales
+Visualización: Muestra el Rango actual del usuario en la esquina inferior izquierda (cerca de favoritos).
+
+Inyección de Señal (Tecla 7): Modifica la función que envía datos al Google Form y al Board. Sustituye el prefijo fijo [SIGNAL] por el Rango Actual del usuario.
+
+Resultado esperado: /// [SYSTEM ARCHITECT] > MENSAJE ///
+
+3. Sistema de Backup "Data-Link" (Teclas T y Shift+T)
+Necesito un sistema de "Pasaportes" para recuperar el progreso si se borran las cookies:
+
+Exportar (Tecla T): Al presionar "T", genera un Token alfanumérico con este formato: GMV-VIDEOS_HIST-LOGROS_TOTALES-NIVEL-CHECKSUM.
+
+Ejemplo: GMV-540-32-LVL3-A12.
+
+Seguridad: El CHECKSUM debe ser una validación simple (ej. la suma de los valores en hexadecimal) para evitar ediciones manuales del código.
+
+Muestra el Token en un cuadro de texto para que el usuario pueda copiarlo.
+
+Importar (Shift + T): Al presionar "Shift + T", abre un cuadro de entrada para pegar un Token:
+
+Validación: Debe empezar por GMV- y el Checksum debe coincidir. Si no, lanza el error: "TOKEN CORRUPTO O INVÁLIDO".
+
+Restauración: Si es válido, descompón el string y sobreescribe los valores históricos en el localStorage (statsData).
+
+Refresco: Ejecuta location.reload() para aplicar los cambios inmediatamente.
+
+4. Control de Teclado y Seguridad
+Aislamiento: Asegúrate de que mientras los cuadros de entrada (Prompts/Inputs) de las teclas T o Shift+T estén abiertos, se use event.stopPropagation() o stopImmediatePropagation(). El usuario debe poder usar el "Espacio" y el "Enter" dentro del cuadro sin que el video de YouTube se pause o se activen otros comandos de la página.
+
+Prevención de Errores: Si el usuario pega texto basura o deja el campo vacío, la aplicación no debe romperse; simplemente ignora la acción y cierra el cuadro.
+
+
+------------------------------------------------------------------------
+
+PROTOCOL_LEGAL_NOTICE // [PROTECCIÓN DE SISTEMA]
+1. PROPIEDAD INTELECTUAL: La estructura lógica, el diseño de la interfaz de comandos, el sistema de inyección de datos ("Signal Injection") y la arquitectura de tokens de recuperación son propiedad exclusiva de [TU NOMBRE/MARCA]. Queda prohibida la reproducción total o parcial de la arquitectura técnica y visual de esta plataforma.
+
+2. MECÁNICAS DE JUEGO: El sistema de Rangos, Logros y Persistencia Histórica constituye un activo de software protegido por leyes internacionales de derechos de autor. Cualquier intento de ingeniería inversa o clonación de estas mecánicas será perseguido legalmente.
+
+3. CONTENIDO DE TERCEROS: Esta interfaz opera sobre la API de YouTube. Los derechos de los videos pertenecen a sus respectivos creadores. Esta plataforma no reclama propiedad sobre el contenido visual, sino sobre la experiencia e interfaz operativa desarrollada.
+
+4. USO DEL SOFTWARE: El usuario se compromete a no utilizar el sistema de inyección para fines maliciosos. El titular se reserva el derecho de revocar el acceso a cualquier "Token" que viole los términos de convivencia del muro.

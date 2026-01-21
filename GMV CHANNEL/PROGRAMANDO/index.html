@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="description" content="GMV - The world's first decentralized generative music video network. Powered by AI, directed by you.">
+    <title>GMV | GENERATIVE MUSIC VIDEO</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff007f;
+            --secondary: #00f3ff;
+            --bg-dark: #050505;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg-dark); color: #f1f5f9; font-family: 'Space Grotesk', sans-serif; }
+        
+        .text-glow-pink { text-shadow: 0 0 10px rgba(255, 0, 127, 0.8); }
+        .neon-shadow-pink { box-shadow: 0 0 20px rgba(255, 0, 127, 0.6), 0 0 40px rgba(255, 0, 127, 0.2); }
+        
+        .panoramic-header {
+            aspect-ratio: 21 / 9;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+        
+.slider-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transform: scale(1);
+    transition: opacity 1s ease-in-out;
+}
+
+.slider-image.active {
+    opacity: 1;
+    transform: scale(1.15);
+    transition: opacity 1s ease-in-out, transform 25s ease-out !important;
+}
+        
+        .slide-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            pointer-events: none;
+        }
+        
+        .slide-overlay.active { opacity: 1; }
+        
+.gradient-overlay-1 {
+    background: linear-gradient(to top, rgba(5, 5, 5, 1) 0%, rgba(5, 5, 5, 0.2) 20%, transparent 100%);
+}
+
+.gradient-overlay-2 {
+    background: linear-gradient(to top, rgba(5, 5, 5, 1) 0%, rgba(5, 5, 5, 0.2) 20%, transparent 100%);
+}
+
+.gradient-overlay-3 {
+    background: linear-gradient(to top, rgba(5, 5, 5, 1) 0%, rgba(5, 5, 5, 0.2) 20%, transparent 100%);
+}
+        
+        .slide-text {
+            position: absolute;
+            bottom: 60px; 
+            left: 80px;
+            z-index: 10;
+            max-width: 600px;
+            opacity: 0;
+        }
+        
+        .slide-text.active {
+            animation: slideTextIn 0.8s ease-out 0.3s forwards;
+        }
+        
+@keyframes slideTextIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+        
+        .slide-title {
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            color: #00f3ff;;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            letter-spacing: 1px;
+        }
+        
+        .slide-description {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
+            line-height: 1.4;
+        }
+        
+.slide-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    width: 0;
+    z-index: 30;
+}
+
+.slide-progress.active { 
+    width: 100%; 
+    transition: width 5s linear; /* La transición SOLO cuando está activa */
+}
+        
+        .slide-indicator {
+            width: 48px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.5s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide-indicator.active {
+            background: var(--primary);
+            width: 64px;
+        }
+        
+        .slide-indicator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .slide-indicator:hover::before { left: 100%; }
+        
+        .breathe-button {
+            animation: breathe 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.4), 0 0 30px rgba(255, 255, 255, 0.2);
+            }
+            50% { 
+                transform: scale(1.05); 
+                box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 50px rgba(255, 255, 255, 0.4), 0 0 75px rgba(255, 0, 127, 0.3);
+            }
+        }
+        
+        .breathe-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .breathe-button:hover::before { left: 100%; }
+        
+        .breathe-button:hover {
+            animation: breathe 1.5s ease-in-out infinite;
+            transform: scale(1.08);
+        }
+        
+.feature-card {
+    border: 2px solid rgba(255, 0, 127, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.4), 0 0 30px rgba(255, 0, 127, 0.1);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 0, 127, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s;
+    z-index: 0;
+}
+
+.feature-card:hover::before {
+    left: 100%;
+}
+
+.feature-card:hover {
+    background: var(--primary);
+    border-color: white;
+    box-shadow: 0 0 30px rgba(255, 0, 127, 0.8), 0 0 60px rgba(255, 0, 127, 0.4), 0 0 90px rgba(255, 0, 127, 0.2);
+    transform: scale(1.05);
+}
+
+.feature-card > * {
+    position: relative;
+    z-index: 1;
+}
+        
+.feature-icon-box {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    margin-bottom: 2rem;
+    transition: all 0.4s ease;
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.4), 0 0 30px rgba(255, 0, 127, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-icon-box::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 0, 127, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s;
+}
+
+.feature-card:hover .feature-icon-box {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 0 30px rgba(255, 0, 127, 0.8), 0 0 60px rgba(255, 0, 127, 0.4), 0 0 90px rgba(255, 0, 127, 0.2);
+    transform: scale(1.1);
+    border-color: white;
+}
+
+.feature-card:hover .feature-icon-box::before {
+    left: 100%;
+}
+
+@media (max-width: 768px) {
+    .slide-text {
+        bottom: 20px;
+        left: 40px;
+        right: 40px;
+    }
+    .slide-title { font-size: 1.8rem; }
+    .slide-description { font-size: 1rem; }
+}
+	/* Añade esto para que el cambio de color sea suave */
+.header-icon {
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.header-icon:hover {
+    color: #00f3ff !important; /* Color Cyan */
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.8); /* Brillo Cyan */
+}
+    </style>
+</head>
+<body>
+    <nav style="position: fixed; top: 0; width: 100%; z-index: 50; background: linear-gradient(to bottom, rgba(0,0,0,.9), transparent); backdrop-filter: blur(10px);">
+        <div style="max-width: 1600px; margin: 0 auto; padding: 0 2rem; height: 50px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-family: 'Lato', sans-serif; font-weight: 700; font-size: 1.25rem;">
+                <span style="color: var(--primary);" class="text-glow-pink">GMV |</span>
+                <span style="color: white;"> GENERATIVE MUSIC VIDEO</span>
+            </span>
+            
+            <div style="display: flex; gap: 2rem; align-items: center;">
+    <a href="https://www.youtube.com/@GenerativeMusicVideoYT" target="_blank" class="header-icon" style="color: rgba(255,255,255,0.6); text-decoration: none;">
+        <span class="material-symbols-outlined" style="font-size: 1.875rem;">smart_display</span>
+    </a>
+    
+    <a href="https://ko-fi.com/generativemusicvideo/tip" target="_blank" class="header-icon" style="color: rgba(255,255,255,0.6); text-decoration: none;">
+        <span class="material-symbols-outlined" style="font-size: 1.875rem;">favorite</span>
+    </a>
+    
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSc-y8q0H880xqQVIHvPzkPaKyl97-U3gDIJo-VmuVXNa4V6BQ/viewform" target="_blank" class="header-icon" style="color: rgba(255,255,255,0.6); text-decoration: none;">
+        <span class="material-symbols-outlined" style="font-size: 1.875rem;">upload_file</span>
+    </a>
+</div>
+        </div>
+    </nav>
+
+	<main style="margin-top: 35px;">
+    	<header class="panoramic-header">
+            <div style="position: absolute; inset: 0; z-index: 0;">
+                <div class="slide-progress" id="slide-progress"></div>
+                
+                <div class="slider-image active" data-slide="0" style="background-image: url('img/ban1.webp');"></div>
+                <div class="slide-overlay gradient-overlay-1 active" data-overlay="0"></div>
+                <div class="slide-text active" data-text="0">
+                    <h3 class="slide-title">Your new favorite station</h3>
+                    <p class="slide-description">GMV is bringing back the MTV aesthetic for the AI generation. A place where the visuals never stop and the music never ends.</p>
+                </div>
+                
+                <div class="slider-image" data-slide="1" style="background-image: url('img/ban2.webp');"></div>
+                <div class="slide-overlay gradient-overlay-2" data-overlay="1"></div>
+                <div class="slide-text" data-text="1">
+                    <h3 class="slide-title">The Mannequins</h3>
+                    <p class="slide-description">Swedish Indie Pop / New Wave / Synth Rock trio burst onto the scene with their single: Dollhouse.</p>
+                </div>
+                
+                <div class="slider-image" data-slide="2" style="background-image: url('img/ban3.webp');"></div>
+                <div class="slide-overlay gradient-overlay-3" data-overlay="2"></div>
+                <div class="slide-text" data-text="2">
+                    <h3 class="slide-title">DR. DREAMS</h3>
+                    <p class="slide-description">Dr. Dreams is a composer and producer. His songs, "Instant Replay" and "U R All I Need," are all you need to dream.</p>
+                </div>
+            </div>
+            
+            <div style="position: absolute; bottom: 24px; right: 32px; display: flex; gap: 12px; z-index: 20;">
+                <div class="slide-indicator active" data-slide="0"></div>
+                <div class="slide-indicator" data-slide="1"></div>
+                <div class="slide-indicator" data-slide="2"></div>
+            </div>
+        </header>
+
+        <section style="padding: 3rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center;">
+            <h1 style="font-family: 'Syncopate', sans-serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 700; line-height: 1.1; margin-bottom: 3rem; max-width: 1200px; margin-left: auto; margin-right: auto;">
+                <span style="display: block; color: white;">EXPERIENCE THE</span>
+                <span style="display: block; color: var(--primary);" class="text-glow-pink">GENERATIVE FUTURE</span>
+                <span style="display: block; color: white;">OF MUSIC TELEVISION</span>
+            </h1>
+
+            <div style="margin-bottom: 3rem;">
+                <a href="channel.html" class="breathe-button" style="display: inline-block; padding: 1.4rem 2rem; background: white; color: black; font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 0.625rem; letter-spacing: 0.3em; text-decoration: none; border-radius: 2px;">
+                    <span style="position: relative; z-index: 10;">PLAY THE FUTURE</span>
+                </a>
+            </div>
+        </section>
+
+        <section style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+            <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; margin-bottom: 5rem; gap: 2rem;">
+               
+ <div>
+                    <span style="color: var(--secondary); font-family: 'Syncopate', sans-serif; font-size: 0.625rem; letter-spacing: 0.4em; text-transform: uppercase; display: block; margin-bottom: 0.75rem;">PLATFORM CORE</span>
+                    <h2 style="font-size: clamp(3rem, 5vw, 4.5rem); font-family: 'Syncopate', sans-serif; font-weight: 700; line-height: 0.9;">NETWORK <br/>FEATURES</h2>
+                </div>
+                <p style="color: #94a3b8; max-width: 320px; font-size: 0.625rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; line-height: 1.75; text-align: right;">
+                    A curated ecosystem designed for the next era of visual consumption and neural artistry.
+                </p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div class="feature-card">
+                    <div class="feature-icon-box">
+                        <span class="material-symbols-outlined">live_tv</span>
+                    </div>
+                    <h3 style="font-family: 'Syncopate', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">24/7 STREAM</h3>
+                    <p style="color: #94a3b8; font-size: 0.875rem; line-height: 1.75; font-weight: 300;">
+                        Infinite loop of high-definition AI music videos. Curated 24 hours a day, 7 days a week for non-stop visual immersion.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-box">
+                        <span class="material-symbols-outlined">person_search</span>
+                    </div>
+                    <h3 style="font-family: 'Syncopate', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">ARTIST SHOWCASE</h3>
+                    <p style="color: #94a3b8; font-size: 0.875rem; line-height: 1.75; font-weight: 300;">
+                        Discover the pioneers of generative visuals. Profiles, collections, and exclusive drops from top neural artists.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-box">
+                        <span class="material-symbols-outlined">bookmark_add</span>
+                    </div>
+                    <h3 style="font-family: 'Syncopate', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">FAVORITES SYSTEM</h3>
+                    <p style="color: #94a3b8; font-size: 0.875rem; line-height: 1.75; font-weight: 300;">
+                        Curate your own visual library. Save the most impressive prompts and music videos to your personal collection.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-box">
+                        <span class="material-symbols-outlined">playlist_play</span>
+                    </div>
+                    <h3 style="font-family: 'Syncopate', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">FAVORITES PLAYBACK</h3>
+                    <p style="color: #94a3b8; font-size: 0.875rem; line-height: 1.75; font-weight: 300;">
+                        Personalized TV mode. Play only the videos you love in a seamless, high-performance visual stream.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-box">
+                        <span class="material-symbols-outlined">monitoring</span>
+                    </div>
+                    <h3 style="font-family: 'Syncopate', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">REAL-TIME STATS</h3>
+                    <div style="margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.625rem; letter-spacing: 0.1em; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">
+                            <span>Users Connected</span>
+                            <span style="color: var(--primary);" id="user-count">4,281</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.625rem; letter-spacing: 0.1em; color: #64748b; font-weight: 700; text-transform: uppercase;">
+                            <span>Signals Injected</span>
+                            <span style="color: var(--primary);" id="signal-count">1.2M</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-box">
+                        <span class="material-symbols-outlined">stars</span>
+                    </div>
+                    <h3 style="font-family: 'Syncopate', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">GAMIFICATION</h3>
+                    <p style="color: #94a3b8; font-size: 0.875rem; line-height: 1.75; font-weight: 300;">
+                        Level up by interacting. Earn unique badges and rewards based on your watching habits and community participation.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section style="padding: 6rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
+            <h2 style="font-family: 'Syncopate', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 2rem;">
+                READY TO <span style="color: var(--primary);">EXPLORE</span> THE FUTURE?
+            </h2>
+            <p style="color: #94a3b8; max-width: 700px; margin: 0 auto 2.5rem;">
+                Join our community of creators and generative visual enthusiasts. Be part of the next revolution in audiovisual content.
+            </p>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+                <button onclick="window.location.href='channel.html'" style="padding: 0.75rem 2rem; background: var(--primary); color: white; border: none; font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 0.625rem; letter-spacing: 0.3em; cursor: pointer; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    SIGN UP FREE
+                </button>
+                <button style="padding: 0.75rem 2rem; background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 0.625rem; letter-spacing: 0.3em; cursor: pointer; transition: background 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">
+                    LEARN MORE
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer style="border-top: 1px solid rgba(255,255,255,0.05); padding: 5rem 2rem;">
+<div style="max-width: 1600px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 4rem;">
+            <div>
+                <span style="font-family: 'Lato', sans-serif; font-weight: 700; font-size: 1.25rem; display: block; margin-bottom: 1.5rem;">
+                    <span style="color: var(--primary);" class="text-glow-pink">GMV |</span>
+                    <span style="color: white;"> GENERATIVE MUSIC VIDEO</span>
+                </span>
+                <p style="color: #64748b; font-size: 0.875rem; font-weight: 500;">
+                    The world's first decentralized generative music video network. Powered by AI, directed by you.
+                </p>
+            </div>
+            
+            <div>
+                <span style="color: var(--primary); font-family: 'Syncopate', sans-serif; font-size: 0.625rem; letter-spacing: 0.3em; font-weight: 700; display: block; margin-bottom: 1rem;">NETWORK</span>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <a href="channel.html" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Live Stream</a>
+                    <a href="#" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Archive</a>
+                    <a href="#" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Schedule</a>
+                </div>
+            </div>
+            
+            <div>
+                <span style="color: var(--secondary); font-family: 'Syncopate', sans-serif; font-size: 0.625rem; letter-spacing: 0.3em; font-weight: 700; display: block; margin-bottom: 1rem;">LEGAL</span>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <a href="#" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Privacy</a>
+                    <a href="#" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Terms</a>
+                    <a href="#" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Copyright</a>      
+                </div>
+            </div>
+
+            <div>
+                <span style="color: white; font-family: 'Syncopate', sans-serif; font-size: 0.625rem; letter-spacing: 0.3em; font-weight: 700; display: block; margin-bottom: 1rem;">SOCIAL</span>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <a href="https://www.youtube.com/@GenerativeMusicVideoYT" target="_blank" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">YouTube</a>
+                    <a href="#" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Discord</a>
+                    <a href="#" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">X / Twitter</a>
+                </div>
+            </div>
+
+            <div>
+                <span style="color: white; font-family: 'Syncopate', sans-serif; font-size: 0.625rem; letter-spacing: 0.3em; font-weight: 700; display: block; margin-bottom: 1rem;">SUPPORT</span>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <a href="https://ko-fi.com/generativemusicvideo/tip" target="_blank" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Ko-Fi</a>
+                    <a href="mailto:generativemusicvideo@gmail.com" style="color: #94a3b8; text-decoration: none; font-size: 0.625rem; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'Syncopate', sans-serif; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#94a3b8'">Contact</a>
+                </div>
+            </div>
+        </div> 
+<div style="max-width: 1600px; margin: -2.5rem auto 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; font-size: 0.625rem; letter-spacing: 0.2em; color: #475569; font-weight: 700; text-transform: uppercase; font-family: 'Syncopate', sans-serif;">
+    <p style="margin: 0;">© 2026 GMV PLATFORM. ALL RIGHTS RESERVED.</p>
+    <p style="margin: 0;">POWERED BY YOUTUBE</p>
+</div>
+    </footer>
+
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slider-image');
+        const overlays = document.querySelectorAll('.slide-overlay');
+        const indicators = document.querySelectorAll('.slide-indicator');
+        const slideTexts = document.querySelectorAll('.slide-text');
+        const progressBar = document.getElementById('slide-progress');
+        let slideInterval;
+        
+        function resetProgress() {
+            if (progressBar) {
+                progressBar.classList.remove('active');
+                void progressBar.offsetWidth;
+                progressBar.classList.add('active');
+            }
+        }
+        
+function showSlide(index) {
+    // 1. Limpieza inmediata de todas las clases active
+    slides.forEach(slide => slide.classList.remove('active'));
+    overlays.forEach(overlay => overlay.classList.remove('active'));
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    slideTexts.forEach(text => text.classList.remove('active'));
+
+    // 2. Aplicar active a la nueva selección
+    slides[index].classList.add('active');
+    overlays[index].classList.add('active');
+    indicators[index].classList.add('active');
+    slideTexts[index].classList.add('active');
+
+    currentSlide = index;
+    resetProgress();
+}
+        
+        function nextSlide() {
+            const index = (currentSlide + 1) % slides.length;
+            showSlide(index);
+        }
+        
+        function startSlideshow() {
+	    if (slideInterval) clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 5000);
+            resetProgress();
+        }
+        
+        function stopSlideshow() {
+            clearInterval(slideInterval);
+            if (progressBar) progressBar.classList.remove('active');
+        }
+        
+        startSlideshow();
+        
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                stopSlideshow();
+                showSlide(index);
+                startSlideshow();
+            });
+        });
+                
+        function updateStats() {
+            const userCount = document.getElementById('user-count');
+            const signalCount = document.getElementById('signal-count');
+            
+            const currentUsers = parseInt(userCount.textContent.replace(',', ''));
+            const newUsers = currentUsers + Math.floor(Math.random() * 10) - 3;
+            userCount.textContent = newUsers.toLocaleString();
+            
+            const currentSignals = parseFloat(signalCount.textContent.replace('M', ''));
+            const newSignals = (currentSignals + Math.random() * 0.01).toFixed(2);
+            signalCount.textContent = newSignals + 'M';
+        }
+        
+        setInterval(updateStats, 5000);
+    </script>
+</body>
+</html>
