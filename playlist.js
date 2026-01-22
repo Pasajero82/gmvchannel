@@ -197,8 +197,8 @@ const musicVideos = [
 { id: "zrkmDqSOXT4", artist: "MST7", title: "When Dreams Become the Horror" },
 { id: "iEwe_JsDbag", artist: "Cale Frombach", title: "Enshittification: The Museum of the Internet" },
 { id: "1NeLWVJ0JOU", artist: "Cale Frombach", title: "Billy's Big Tab" },
-{ id: "d_ng_cXst34", artist: " I Monster & C.F.", title: "Dear John", badgeText: "👍STAFF PICK" },
-{ id: "1NeLWVJ0JOU", artist: "Electric Six & C.F.", title: "Randy's Hot Tonight" },
+{ id: "d_ng_cXst34", artist: "I Monster & C.F.", title: "Dear John", badgeText: "👍STAFF PICK" },
+{ id: "Dc8cazBsoE", artist: "Electric Six & C.F.", title: "Randy's Hot Tonight" },
 { id: "YFw2lj8VsOs", artist: "WickedAI", title: "Jedi Mind Tricked" },
 ];
 
