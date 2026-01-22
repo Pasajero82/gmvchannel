@@ -137,6 +137,7 @@ const musicVideos = [
 { id: "PIybyaIC8YI", artist: "Kim Aionic", title: "I Don't Know, Just Ask Me" },
 { id: "u6O-jIIaowk", artist: "Kim Aionic", title: "Body Dive" },
 { id: "DLs7ZsQXG_g", artist: "Kim Aionic", title: "I Can't Fall Again" },
+{ id: "Dtvl__t37RU", artist: "Kim Aionic", title: "Not Me" }, badgeText: "🔥JUST DROPPED",badgeColor: "pink" },
 { id: "Vx1UGA_T1nI", artist: "Kelly Boesch", title: "A Very Unusual Town" },
 { id: "DuawegM3fo8", artist: "Kelly Boesch", title: "London Nights" },
 { id: "hJ5sB0fQits", artist: "Kelly Boesch", title: "Midnight Fantasy" },
