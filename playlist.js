@@ -38,12 +38,6 @@ const artistProfiles = {
             { name: "youtube", url: "https://www.youtube.com/@Mind0verImages" }
         ]
     },
-    "nexo": {
-        links: [
-            { name: "spotify", url: "https://open.spotify.com/intl-es/artist/0MPCuNCQgzdI9GvimywwG3?si=no0iG7ARRKu2Yb32ZnzN5Q" },
-            { name: "youtube", url: "https://www.youtube.com/@Nexo_Glitchgrid" }
-        ]
-    },
     // Puedes agregar más artistas siguiendo este formato...
 };
 
@@ -68,11 +62,9 @@ const musicVideos = [
 
 { id: "dPPR5NSGxo4", artist: "Surviving the Storm", title: "No mercy" },
 
-{ id: "JT_OvLpc1FY", artist: "N E X O", title: "Stack Bags", badgeText: "GVM EXCLUSIVE ARTIST", badgeColor: "gold", artistId: "nexo", },
+{ id: "JT_OvLpc1FY", artist: "N E X O", title: "Stack Bags", badgeText: "GVM EXCLUSIVE ARTIST", badgeColor: "gold" },
 
-{ id: "P_rUrfrkFRo", artist: "N E X O", title: "2045", badgeText: "GVM EXCLUSIVE ARTIST", badgeColor: "gold", artistId: "nexo", },
-
-{ id: "iT7mgfbi1NE", artist: "N E X O", title: "Ghost in the System", badgeText: "🔥JUST DROPPED",badgeColor: "pink", artistId: "nexo", },
+{ id: "P_rUrfrkFRo", artist: "N E X O", title: "2045", badgeText: "GVM EXCLUSIVE ARTIST", badgeColor: "gold" },
 
 { id: "-fNk4z4sf2Y", artist: "AI KPOP MV", title: "Fire" },
 
@@ -137,7 +129,6 @@ const musicVideos = [
 { id: "PIybyaIC8YI", artist: "Kim Aionic", title: "I Don't Know, Just Ask Me" },
 { id: "u6O-jIIaowk", artist: "Kim Aionic", title: "Body Dive" },
 { id: "DLs7ZsQXG_g", artist: "Kim Aionic", title: "I Can't Fall Again" },
-{ id: "Dtvl__t37RU", artist: "Kim Aionic", title: "Not Me", badgeText: "🔥JUST DROPPED",badgeColor: "pink" },
 { id: "Vx1UGA_T1nI", artist: "Kelly Boesch", title: "A Very Unusual Town" },
 { id: "DuawegM3fo8", artist: "Kelly Boesch", title: "London Nights" },
 { id: "hJ5sB0fQits", artist: "Kelly Boesch", title: "Midnight Fantasy" },
@@ -174,12 +165,8 @@ const musicVideos = [
 { id: "qtp7W6891g4", artist: "Scordalus", title: "Faking" },
 { id: "PMIbTPnx1zA", artist: "Scordalus", title: "Outcry" },
 { id: "qrVGT2NaKrE", artist: "Scordalus", title: "2026" },
-{ id: "8KQe1l-n-qg", artist: "Sirock", title: "Save Me" },
-{ id: "t0LZWayizeY", artist: "Sirock", title: "Ghost In The Crowd" },
-{ id: "8I1hDhTDoX8", artist: "Sirock", title: "Who am I" },
-{ id: "pANKx20ptFo", artist: "Sirock", title: "Monster In My Head" },
-{ id: "kXX4OL8W-vk", artist: "Sirock", title: "Tides Of The Hollow" },
-{ id: "j8k356a_Cfk", artist: "Sirock", title: "Dead Inside", badgeText: "🔥JUST DROPPED",badgeColor: "pink" },
+{ id: "JpMgRUd5M30", artist: "Sirock", title: "Fall again" },
+{ id: "n2R2OKHMGfQ", artist: "Sirock", title: "Who we are" },
 { id: "N39LdXtFs-Q", artist: "NoSinSSS", title: "Shattered Mirror!" },
 { id: "hGUts2uIKIY", artist: "Rock & Babes", title: "Sleepwalker Parade" },
 { id: "H0xclWWRLGA", artist: "Rock & Babes", title: "Let Me Out" },
@@ -187,20 +174,12 @@ const musicVideos = [
 { id: "gZLC8vCSUBY", artist: "Son of the Dead Sun", title: "The Flesh of Your Sin" },
 { id: "_sAvJzZfWyM", artist: "Venus Colapse", title: "What remain where you gone" },
 { id: "_lAlyFCk5BQ", artist: "Venus Colapse", title: "The Monster inside" },
+{ id: "75XSvy_tMjQ", artist: "Robot Swap", title: "After The Pulse" },
+{ id: "h3-OyWIJ5jU", artist: "Coco", title: "Hyper Flux Beat" },
 { id: "EhUuLnmgYdM", artist: "Tastier Folk", title: "Still Not You" },
-{ id: "ATBE_6o2bzc", artist: "Tastier Folk", title: "I Break Loud", badgeText: "🔥JUST DROPPED",badgeColor: "pink" },
 { id: "S7-8eJX7gQM", artist: "Shattered Silence", title: "Glitch in Your System", badgeText: "GVM EXCLUSIVE ARTIST", badgeColor: "gold"},
 { id: "yIjef5ZvNAg", artist: "Shattered Silence", title: "Cage of Glass",badgeText: "GVM EXCLUSIVE ARTIST", badgeColor: "gold"},
 { id: "vHRCet_rnGg", artist: "Shattered Silence", title: "The Storm Will Fade",badgeText: "GVM EXCLUSIVE ARTIST", badgeColor: "gold"},
-{ id: "b-FYk_NdNlk", artist: "Shattered Silence", title: "Crash & Burn",badgeText: "GVM EXCLUSIVE ARTIST", badgeColor: "gold"},
-{ id: "Xz5pCBYasEE", artist: "MST7", title: "Star With Me" },
-{ id: "HktaN7Y4gZI", artist: "MST7", title: "Beyond the Horizon" },
-{ id: "zrkmDqSOXT4", artist: "MST7", title: "When Dreams Become the Horror" },
-{ id: "iEwe_JsDbag", artist: "Cale Frombach", title: "Enshittification: The Museum of the Internet" },
-{ id: "1NeLWVJ0JOU", artist: "Cale Frombach", title: "Billy's Big Tab" },
-{ id: "d_ng_cXst34", artist: "I Monster & C.F.", title: "Dear John", badgeText: "👍STAFF PICK" },
-{ id: "Dc8cazBsoE", artist: "Electric Six & C.F.", title: "Randy's Hot Tonight" },
-{ id: "YFw2lj8VsOs", artist: "WickedAI", title: "Jedi Mind Tricked" },
 ];
 
 
