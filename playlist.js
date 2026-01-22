@@ -102,6 +102,8 @@ const musicVideos = [
 
 { id: "2q_d3JeJi6Q", artist: "Mind Over Images", title: "On Repeat", badgeText: "GVM EXCLUSIVE ARTIST", badgeColor: "gold", artistId: "mind", },
 
+{ id: "7XoXivF7x1M", artist: "Mind Over Images", title: "Can't Get Out", badgeText: "🔥JUST DROPPED", badgeColor: "pink", artistId: "mind", },
+
 { id: "bVqTbAgwaXk", artist: "UONOSE", title: "Rudolf" },
 { id: "CpivgT2ZDW4", artist: "LUNAVÉ", title: "Eternal Mutation" },
 { id: "g_2Lm-mpldw", artist: "LUNAVÉ", title: "Hello! Ma Baby" },
@@ -119,6 +121,7 @@ const musicVideos = [
 { id: "XRlEhSNTeOM", artist: "DropGhost", title: "Hollow Remedy" },
 { id: "8T1xAy59yjo", artist: "DropGhost", title: "Good Girl" },
 { id: "Ou6yw41Zux8", artist: "DropGhost", title: "Not Alone" },
+{ id: "MIfTn_otmmc", artist: "DropGhost", title: "Still In The Room", badgeText: "🔥JUST DROPPED", badgeColor: "pink"},
 { id: "JsOhFJ4RxfU", artist: "Qarmageddon", title: "Pretty when I break" },
 { id: "2ilMIRMGP_0", artist: "Elara", title: "Where no one sees" },
 { id: "x5JDfAejGj8", artist: "Trisha Code", title: "Autumn Drive" },
