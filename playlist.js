@@ -203,6 +203,8 @@ const musicVideos = [
 { id: "1NeLWVJ0JOU", artist: "Cale Frombach", title: "Billy's Big Tab" },
 { id: "d_ng_cXst34", artist: "I Monster & C.F.", title: "Dear John", badgeText: "👍STAFF PICK" },
 { id: "Dc8cazBsoE", artist: "Electric Six & C.F.", title: "Randy's Hot Tonight" },
+{ id: "FrUnSQvpDVs", artist: "The Inside Cats", title: "An Ordinary Morning" },
+{ id: "NKoo2xJd3b4", artist: "Elvira", title: "Ashes of the Crown" },
 ];
 
 
