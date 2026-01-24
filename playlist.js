@@ -40,7 +40,7 @@ const artistProfiles = {
             { name: "spotify", url: "https://open.spotify.com/intl-es/artist/0MPCuNCQgzdI9GvimywwG3?si=no0iG7ARRKu2Yb32ZnzN5Q" },
             { name: "youtube", url: "https://www.youtube.com/@Nexo_Glitchgrid" }
         ]
-    }
+    },
 
     "tyler": {
         links: [
