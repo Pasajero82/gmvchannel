@@ -1516,6 +1516,15 @@
     </div>
     </div>
     <script src="playlist.js"></script>
+	<script>
+// Esperar a que se carguen los videos antes de iniciar
+let checkVideosInterval = setInterval(() => {
+    if (musicVideos.length > 0) {
+        clearInterval(checkVideosInterval);
+        console.log("✅ Videos listos, sistema iniciado");
+    }
+}, 100);
+</script>
     <script src="news.js"></script>
     <script src="promos.js"></script>
 
