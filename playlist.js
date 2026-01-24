@@ -41,6 +41,13 @@ const artistProfiles = {
             { name: "youtube", url: "https://www.youtube.com/@Nexo_Glitchgrid" }
         ]
     }
+
+    "tyler": {
+        links: [
+            { name: "spotify", url: "https://open.spotify.com/intl-es/track/30jGwOH3MVM2xVM8k4QO0a?si=07be85d9bcb74caa" },
+            { name: "youtube", url: "https://www.youtube.com/channel/UCfKOwBhdhjXlw8wWE-3iTIg" }
+        ]
+    }
 };
 
 // --- 2. LISTA DE VIDEOS (SE CARGA DESDE GOOGLE SHEETS) ---
