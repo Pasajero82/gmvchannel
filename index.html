@@ -280,14 +280,57 @@
 }
 	/* Añade esto para que el cambio de color sea suave */
 .header-icon {
-    transition: color 0.3s ease, text-shadow 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.header-icon svg {
+    transition: all 0.3s ease;
+}
+
+.header-icon:hover svg path {
+    fill: #00f3ff;
+    filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.8));
 }
 
 .header-icon:hover {
-    color: #00f3ff !important; /* Color Cyan */
-    text-shadow: 0 0 10px rgba(0, 243, 255, 0.8); /* Brillo Cyan */
+    transform: scale(1.1);
+}
+.tooltip {
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: #00f3ff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+    letter-spacing: 0.5px;
 }
 
+.header-icon:hover .tooltip {
+    opacity: 1;
+}
+
+.header-icon:nth-child(2) .tooltip {
+    left: auto;
+    right: -50px;
+    transform: translateX(0);
+}
+
+.header-icon:nth-child(3) .tooltip {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+}
 .cursor {
     display: inline-block;
     color: #ffffff; /* Blanco puro */
@@ -317,17 +360,26 @@
                 <span style="color: white;"> GENERATIVE MUSIC VIDEO</span>
             </span>
             
-            <div style="display: flex; gap: 2rem; align-items: center;">
-    <a href="https://www.youtube.com/@GenerativeMusicVideoYT" target="_blank" class="header-icon" style="color: rgba(255,255,255,0.6); text-decoration: none;">
-        <span class="material-symbols-outlined" style="font-size: 1.875rem;">smart_display</span>
+<div style="display: flex; gap: 0.5rem; align-items: center;">
+    <a href="https://www.youtube.com/@GenerativeMusicVideoYT" target="_blank" class="header-icon" style="text-decoration: none; display: inline-block; position: relative;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 8v8l5-4-5-4zm11-5H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z" fill="rgba(255,255,255,0.6)"/>
+        </svg>
+        <span class="tooltip">Youtube Channel</span>
     </a>
     
-    <a href="https://ko-fi.com/generativemusicvideo/tip" target="_blank" class="header-icon" style="color: rgba(255,255,255,0.6); text-decoration: none;">
-        <span class="material-symbols-outlined" style="font-size: 1.875rem;">favorite</span>
+    <a href="https://ko-fi.com/generativemusicvideo/tip" target="_blank" class="header-icon" style="text-decoration: none; display: inline-block; position: relative;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="rgba(255,255,255,0.6)"/>
+        </svg>
+        <span class="tooltip">Buy a Bit for Generative Music Video</span>
     </a>
     
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSc-y8q0H880xqQVIHvPzkPaKyl97-U3gDIJo-VmuVXNa4V6BQ/viewform" target="_blank" class="header-icon" style="color: rgba(255,255,255,0.6); text-decoration: none;">
-        <span class="material-symbols-outlined" style="font-size: 1.875rem;">upload_file</span>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSc-y8q0H880xqQVIHvPzkPaKyl97-U3gDIJo-VmuVXNa4V6BQ/viewform" target="_blank" class="header-icon" style="text-decoration: none; display: inline-block; position: relative;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11z" fill="rgba(255,255,255,0.6)"/>
+        </svg>
+        <span class="tooltip">Upload your video</span>
     </a>
 </div>
         </div>

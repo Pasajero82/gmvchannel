@@ -202,7 +202,7 @@
             display: inline-block; 
             white-space: nowrap; 
             padding-left: 100%; 
-            animation: marquee 35s linear infinite;
+            animation: marquee 80s linear infinite;
             font-family: 'JetBrains Mono', monospace; 
             font-size: 1.3rem; 
             color: #ccc; 
@@ -1317,6 +1317,103 @@
         box-shadow: 0 0 0 rgba(0, 255, 170, 0);
     }
 }
+
+/* --- SHARE MENU --- */
+#share-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(0, 0, 0, 0.98);
+    border: 3px solid #00ccff;
+    padding: 30px;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 40px rgba(0, 204, 255, 0.6);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    min-width: 350px;
+}
+
+#share-modal.show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.share-header {
+    color: #00ccff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+    border-bottom: 2px solid #00ccff;
+    padding-bottom: 10px;
+}
+
+.share-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.share-btn {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    border: 2px solid #333;
+    color: #fff;
+    padding: 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.share-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 204, 255, 0.5);
+}
+
+.share-btn.twitter { border-color: #1DA1F2; }
+.share-btn.twitter:hover { background: #1DA1F2; border-color: #1DA1F2; }
+
+.share-btn.facebook { border-color: #4267B2; }
+.share-btn.facebook:hover { background: #4267B2; border-color: #4267B2; }
+
+.share-btn.whatsapp { border-color: #25D366; }
+.share-btn.whatsapp:hover { background: #25D366; border-color: #25D366; }
+
+.share-btn.telegram { border-color: #0088cc; }
+.share-btn.telegram:hover { background: #0088cc; border-color: #0088cc; }
+
+.share-btn.copy { border-color: #00ccff; }
+.share-btn.copy:hover { background: #00ccff; border-color: #00ccff; color: #000; }
+
+.share-close {
+    background: linear-gradient(135deg, #ff0055 0%, #cc0044 100%);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    width: 100%;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.share-close:hover {
+    background: linear-gradient(135deg, #ff0066 0%, #ff0055 100%);
+    transform: scale(1.05);
+}
 /* --- PIXEL BOARD MARQUEE --- */
 .pixel-board-container {
     position: absolute;
@@ -1341,7 +1438,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-weight: bold;
     color: #ff0055;
-    animation: marquee-animation 20s linear infinite; //velocidad chat
+    animation: marquee-animation 80s linear infinite; //velocidad chat
     text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055; /* Resplandor extra */
 }
 
@@ -2315,6 +2412,9 @@ if (event.key === '5') {
 if (event.key === '6') {
     toggleFavMenu();
 }
+if (event.key === '4') {
+    openShareMenu();
+}
         });
 
         function setVolume(val) { 
@@ -2680,6 +2780,78 @@ const badge = document.getElementById('dynamicBadge');
             setTimeout(showRandomPromo, 30000); 
             promoInterval = setInterval(showRandomPromo, 900000);
         }
+
+	// --- SHARE SYSTEM ---
+function openShareMenu() {
+    if (!currentVideo || isCommercial) {
+        showSystemMessage("⚠️ NO VIDEO PLAYING");
+        return;
+    }
+    
+    const modal = document.getElementById('share-modal');
+    modal.classList.add('show');
+    isInputActive = true;
+}
+
+function closeShareMenu() {
+    const modal = document.getElementById('share-modal');
+    modal.classList.remove('show');
+    isInputActive = false;
+}
+
+function shareOn(platform) {
+    if (!currentVideo) return;
+    
+    const artist = currentVideo.artist;
+    const title = currentVideo.title;
+    const message = `🎵 I'm listening to: ${artist} - ${title} on www.generativemusicvideo.com and I love it! 🎵`;
+    const url = 'https://www.generativemusicvideo.com';
+    
+    let shareUrl = '';
+    
+switch(platform) {
+        case 'twitter':
+            shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+            break;
+case 'facebook':
+    const fbMessage = `🎵 I'm listening to: ${artist} - ${title} on www.generativemusicvideo.com and I love it! 🎵`;
+    navigator.clipboard.writeText(fbMessage).then(() => {
+        showSystemMessage('📋 COPIED! OPENING FACEBOOK...');
+        setTimeout(() => {
+            window.open('https://www.facebook.com/', '_blank');
+        }, 1500);
+    });
+    closeShareMenu();
+    return;
+        case 'whatsapp':
+            shareUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            break;
+case 'telegram':
+    shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(message)}`;
+    break;
+	case 'copy':
+    navigator.clipboard.writeText(message).then(() => {
+        showSystemMessage('📋 TEXT COPIED TO CLIPBOARD!');
+    }).catch(() => {
+        showSystemMessage('❌ COPY FAILED - TRY MANUALLY');
+    });
+    closeShareMenu();
+    return;
+    }
+    
+    window.open(shareUrl, '_blank', 'width=600,height=400');
+    showSystemMessage('🚀 SHARING ON ' + platform.toUpperCase());
+}
+
+// Cerrar con ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const shareModal = document.getElementById('share-modal');
+        if (shareModal && shareModal.classList.contains('show')) {
+            closeShareMenu();
+        }
+    }
+});
 </script>
 <script>
     // --- PROTECCIÓN BÁSICA ---
@@ -2814,6 +2986,28 @@ window.addEventListener('load', loadGlobalVisits);
            style="background: #000; border: 1px solid #ff0055; color: #ff0055; width: 100%; padding: 10px; font-family: 'JetBrains Mono', monospace; outline: none;" 
            placeholder="WRITE YOUR MESSAGE..." maxlength="100">
     <div style="font-size: 0.7rem; color: #555; margin-top: 10px;">PRESS [ENTER] TO SEND OR [ESC] TO CANCEL</div>
+</div>
+<!-- SHARE MODAL -->
+<div id="share-modal">
+    <div class="share-header">📡 SHARE THIS TRACK</div>
+    <div class="share-buttons">
+        <button class="share-btn twitter" onclick="shareOn('twitter')">
+            <span>🐦</span> Twitter
+        </button>
+        <button class="share-btn facebook" onclick="shareOn('facebook')">
+            <span>📘</span> Facebook
+        </button>
+        <button class="share-btn whatsapp" onclick="shareOn('whatsapp')">
+            <span>💬</span> WhatsApp
+        </button>
+        <button class="share-btn telegram" onclick="shareOn('telegram')">
+            <span>✈️</span> Telegram
+        </button>
+	<button class="share-btn copy" onclick="shareOn('copy')">
+            <span>📋</span> Copy Text
+        </button>
+    </div>
+    <button class="share-close" onclick="closeShareMenu()">CLOSE [ESC]</button>
 </div>
 </body>
 </html>
