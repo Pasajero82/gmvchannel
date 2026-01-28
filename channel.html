@@ -182,6 +182,20 @@
             box-shadow: 0 0 40px rgba(255, 0, 85, 0.8), 0 6px 20px rgba(0, 0, 0, 0.4);
         }
 
+.shortcuts-typing {
+    position: absolute;
+    bottom: 54px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #00ccff;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    min-height: 25px;
+}
         /* --- TOP BAR (MARQUEE) ENHANCED --- */
         .marquee-container { 
             position: absolute; 
@@ -1566,18 +1580,17 @@
 .marquee-text {
     white-space: nowrap;
     display: inline-block;
-    font-size: 1.3rem; //tamaño texto chat
+    font-size: 1.3rem;
     font-family: 'JetBrains Mono', monospace;
     font-weight: bold;
     color: #ff0055;
-    animation: marquee-animation 80s linear infinite; //velocidad chat
-    text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055; /* Resplandor extra */
-}
+    animation: marquee-animation 30s linear infinite;
+    }
 
-        @keyframes marquee-animation {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
+@keyframes marquee-animation {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
     </style>
 </head>
 <body>
@@ -1589,10 +1602,13 @@
             <div class="ring ring-3"></div>
             <img src="logo.png" alt="GMV Logo" class="start-logo">
         </div>
+
 <div style="margin-bottom: 25px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 2px;">
     NETWORK_TRAFFIC: <span id="visit-count" style="color: white;">CONNECTING...</span>
 </div>
-        <button class="enter-btn" onclick="startTV()">PLAY</button>
+<button class="enter-btn" onclick="startTV()">PLAY</button>
+        
+<div class="shortcuts-typing" id="shortcuts-typing"></div>
     </div>
 
 <!-- LOGIN MODAL -->
@@ -1806,11 +1822,12 @@ let checkVideosInterval = setInterval(() => {
  
 // === SISTEMA DE AUTENTICACIÃ"N DE ARTISTAS ===
 const artistRegistry = {
-    "edgar": "📺GMV",
-    "nexo001": "N E X O",
-    "clave3": "TRAVIS SCOTT",
+    "nexo001": { name: "N E X O", type: "artist" },
+    "clave3": { name: "TRAVIS SCOTT", type: "artist" },
     // Agrega más artistas aquí con sus claves secretas
 };
+
+const adminKey = "edgar";
 
 // Variable global para almacenar el artista autenticado
 let authenticatedArtist = null;
@@ -1825,10 +1842,10 @@ function loadArtistAuth() {
 }
 
 // Guardar artista autenticado
-function saveArtistAuth(artistName) {
-    authenticatedArtist = artistName;
-    localStorage.setItem('gmv_artist_auth', artistName);
-    console.log("💎 Artist authenticated:", artistName);
+function saveArtistAuth(artistName, type) {
+    authenticatedArtist = { name: artistName, type: type };
+    localStorage.setItem('gmv_artist_auth', JSON.stringify({ name: artistName, type: type }));
+    console.log("Authenticated:", artistName, "Type:", type);
 }
 
     let totalViewsForRewards = 0;
@@ -1981,17 +1998,11 @@ function closeSignalOverlay() {
 function sendSignalToWall(mensaje) {
     const board = document.getElementById('pixel-board-content');
     
-    // Determinar el formato del mensaje según si es artista o usuario normal
-    let formattedMessage;
     let formDataMessage;
     
     if (authenticatedArtist) {
-        // Formato para artistas autenticados (SIN [SIGNAL])
-        formattedMessage = `[💎 ${authenticatedArtist}] ${mensaje}`;
-        formDataMessage = `[💎 ${authenticatedArtist}] ${mensaje}`;
+        formDataMessage = `[${authenticatedArtist.name}] ${mensaje}`;
     } else {
-        // Formato para usuarios normales (CON [SIGNAL])
-        formattedMessage = mensaje;
         formDataMessage = mensaje;
     }
     
@@ -2002,16 +2013,16 @@ function sendSignalToWall(mensaje) {
     fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
     
     // Agregar al muro con el color correspondiente
-// Agregar al muro con el color correspondiente
     if (board) {
         const pressText = '<span style="color: #fff;">PRESS 7 TO INJECT SIGNAL</span> <span style="color: #666;">:</span> ';
         const currentContent = board.innerHTML;
         const messagesOnly = currentContent.replace(pressText, '').replace('<span style="color: #555;">NO SIGNALS DETECTED</span>', '');
         
         if (authenticatedArtist) {
-            board.innerHTML = pressText + '<span style="color: #00f2ff;">' + formattedMessage + '</span> <span style="color: #666;">●</span> ' + messagesOnly;
+            const color = authenticatedArtist.type === 'admin' ? '#FFD700' : '#00f2ff';
+            board.innerHTML = pressText + `<span style="color: ${color};">[${authenticatedArtist.name}] ${mensaje}</span> <span style="color: #666;">●</span> ` + messagesOnly;
         } else {
-            board.innerHTML = pressText + '<span style="color: #fff;">[SIGNAL]</span> <span style="color: #ff0055;"> ' + formattedMessage + '</span> <span style="color: #666;">●</span> ' + messagesOnly;
+            board.innerHTML = pressText + '<span style="color: #fff;">[SIGNAL]</span> <span style="color: #ff0055;"> ' + formDataMessage + '</span> <span style="color: #666;">●</span> ' + messagesOnly;
         }
     }
     
@@ -2020,14 +2031,12 @@ function sendSignalToWall(mensaje) {
 }
 
 // 🎯 FUNCIÓN PARA CARGAR MENSAJES DESDE GOOGLE SHEETS
-
 function loadMessagesFromSheet() {
     console.log("🔄 Intentando cargar mensajes del CSV...");
     
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrBDDpK_Th8p2zl_uO1T20ojNV59hUFfkdi4JVq8dYoGFNuOO3-d8K0KHGk0aPcXhJEOutURUIBW5h/pub?gid=579607902&single=true&output=csv";
     
-fetch(CSV_URL)
-
+    fetch(CSV_URL)
         .then(response => {
             console.log("✅ Respuesta recibida del CSV");
             return response.text();
@@ -2035,11 +2044,9 @@ fetch(CSV_URL)
         .then(csvText => {
             console.log("📄 CSV completo:", csvText);
             
-            // Separar por líneas
             const lines = csvText.trim().split('\n');
             console.log("📊 Número de líneas:", lines.length);
             
-            // Saltar la primera línea (headers)
             const messages = [];
             
             for (let i = 1; i < lines.length; i++) {
@@ -2047,14 +2054,10 @@ fetch(CSV_URL)
                 if (line) {
                     console.log("Procesando línea", i, ":", line);
                     
-                    // Método más robusto: dividir por coma y tomar la segunda columna
                     const columns = line.split(',');
                     
                     if (columns.length >= 2) {
-                        // La segunda columna es el mensaje
                         let mensaje = columns[1];
-                        
-                        // Limpiar comillas si existen
                         mensaje = mensaje.replace(/^["']|["']$/g, '').trim();
                         
                         console.log("Mensaje extraído:", mensaje);
@@ -2068,34 +2071,34 @@ fetch(CSV_URL)
             console.log("💬 Total de mensajes:", messages.length);
             console.log("📝 Mensajes:", messages);
             
-            // Mostrar los últimos 10 mensajes en el muro
             const board = document.getElementById('pixel-board-content');
             if (board) {
                 if (messages.length > 0) {
-                    // Tomamos los últimos 10 mensajes (más recientes)
                     const recentMessages = messages.slice(-10).reverse();
                     
-                    // Construimos el texto del muro
 		const wallText = recentMessages
     .map(msg => {
-        // Detectar si el mensaje es de un artista (contiene [💎])
-        if (msg.includes('[💎')) {
-            // Mensaje de artista - TODO EN CYAN
+        // Detectar si es mensaje de GMV (admin)
+        if (msg.includes('[GMV]')) {
+            return `<span style="color: #FFD700;">${msg}</span>`;
+        }
+        // Detectar si es mensaje de artista verificado (contiene [NOMBRE])
+        else if (msg.startsWith('[') && msg.includes(']') && !msg.includes('[SIGNAL]')) {
             return `<span style="color: #00f2ff;">${msg}</span>`;
-        } else {
-            // Mensaje de usuario normal - Rosa
+        }
+        // Mensaje de usuario normal
+        else {
             return `<span style="color: #fff;">[SIGNAL]</span> <span style="color: #ff0055;"> ${msg}</span>`;
         }
     })
     .join(' <span style="color: #666;">●</span> ');
                     
-                  board.innerHTML = '<span style="color: #fff;">PRESS 7 TO INJECT SIGNAL</span> <span style="color: #666;">:</span> ' + wallText;	
+                    board.innerHTML = '<span style="color: #fff;">PRESS 7 TO INJECT SIGNAL</span> <span style="color: #666;">:</span> ' + wallText;	
                     
-                console.log("✅ Muro actualizado con", recentMessages.length, "mensajes");
+                    console.log("✅ Muro actualizado con", recentMessages.length, "mensajes");
                 } else {
                     console.log("⚠️ No hay mensajes, manteniendo texto por defecto");
-board.innerHTML = '<span style="color: #fff;">PRESS 7 TO INJECT SIGNAL</span> <span style="color: #666;">:</span> <span style="color: #555;">NO SIGNALS DETECTED</span>';
-
+                    board.innerHTML = '<span style="color: #fff;">PRESS 7 TO INJECT SIGNAL</span> <span style="color: #666;">:</span> <span style="color: #555;">NO SIGNALS DETECTED</span>';
                 }
             } else {
                 console.log("❌ El elemento pixel-board-content no existe");
@@ -2859,9 +2862,89 @@ function loadNewsFeed() {
                 ticker.innerHTML = "<span>GMV NEWS:</span> Signal established... &nbsp;&nbsp;&nbsp;&nbsp;" + ytLabel;
             }
         }
-        loadNewsFeed();
+loadNewsFeed();
 	loadMessagesFromSheet();
 	loadArtistAuth(); // Cargar artista autenticado si existe
+	// --- TYPING SHORTCUTS EFFECT ---
+const shortcuts = [
+    '<span style="font-weight: 900;">PRESS [1]</span> HIDE UI',
+    '<span style="font-weight: 900;">PRESS [2]</span> STATS',
+    '<span style="font-weight: 900;">PRESS [3]</span> ACHIEVEMENTS',
+    '<span style="font-weight: 900;">PRESS [4]</span> SHARE',
+    '<span style="font-weight: 900;">PRESS [5]</span> ADD FAVORITE',
+    '<span style="font-weight: 900;">PRESS [6]</span> FAVORITES MENU',
+    '<span style="font-weight: 900;">PRESS [7]</span> INJECT SIGNAL',
+    '<span style="font-weight: 900;">PRESS [8]</span> THE WALL',
+    '<span style="font-weight: 900;">PRESS [9]</span> REWARDS'
+];
+
+let currentShortcutIndex = 0;
+let isTyping = false;
+let typingTimeout;
+
+function typeShortcut(text, index, isDeleting) {
+    const element = document.getElementById('shortcuts-typing');
+    if (!element) return;
+    
+    const strippedText = text.replace(/<[^>]*>/g, '');
+    
+    if (isDeleting) {
+        if (index > 0) {
+            let displayText = '';
+            let charCount = 0;
+            let inTag = false;
+            
+            for (let i = 0; i < text.length && charCount < index - 1; i++) {
+                if (text[i] === '<') inTag = true;
+                displayText += text[i];
+                if (text[i] === '>') inTag = false;
+                if (!inTag && text[i] !== '<' && text[i] !== '>') charCount++;
+            }
+            
+            element.innerHTML = displayText + '<span style="opacity: 0.5;">█</span>';
+            typingTimeout = setTimeout(() => typeShortcut(text, index - 1, true), 30);
+        } else {
+            currentShortcutIndex = (currentShortcutIndex + 1) % shortcuts.length;
+            typingTimeout = setTimeout(() => typeShortcut(shortcuts[currentShortcutIndex], 0, false), 500);
+        }
+    } else {
+        if (index <= strippedText.length) {
+            let displayText = '';
+            let charCount = 0;
+            let inTag = false;
+            
+            for (let i = 0; i < text.length && charCount < index; i++) {
+                if (text[i] === '<') inTag = true;
+                displayText += text[i];
+                if (text[i] === '>') inTag = false;
+                if (!inTag && text[i] !== '<' && text[i] !== '>') charCount++;
+            }
+            
+            element.innerHTML = displayText + '<span style="opacity: 0.5;">█</span>';
+            typingTimeout = setTimeout(() => typeShortcut(text, index + 1, false), 50);
+        } else {
+            // Cursor parpadeante cuando termina
+            let blinkCount = 0;
+            const blinkInterval = setInterval(() => {
+                if (blinkCount % 2 === 0) {
+                    element.innerHTML = text + '<span style="opacity: 0.5;">█</span>';
+                } else {
+                    element.innerHTML = text + '<span style="opacity: 0;">█</span>';
+                }
+                blinkCount++;
+                if (blinkCount >= 8) {
+                    clearInterval(blinkInterval);
+                    typingTimeout = setTimeout(() => typeShortcut(text, strippedText.length, true), 500);
+                }
+            }, 250);
+        }
+    }
+}
+
+// Iniciar efecto typing
+setTimeout(() => typeShortcut(shortcuts[0], 0, false), 1000);
+	
+	// Recargar mensajes cada 10 segundos (más tiempo para que Google procese)
 	setInterval(loadMessagesFromSheet, 10000); 
 
         function onYouTubeIframeAPIReady() {
@@ -3368,15 +3451,22 @@ document.addEventListener('keydown', function(e) {
             keyBuffer = "";
         }
 
-// --- AUTENTICACIÃ"N DE ARTISTAS ---
-        // Revisar si alguna clave de artista está en el buffer
+// --- AUTENTICACIÓN DE ARTISTAS Y ADMIN ---
+        // Revisar admin key
+        if (keyBuffer.includes(adminKey)) {
+            saveArtistAuth("GMV", "admin");
+            showSystemMessage("👑 ADMIN ACCESS GRANTED: GMV");
+            keyBuffer = "";
+        }
+        
+        // Revisar claves de artistas
         for (let clave in artistRegistry) {
             if (keyBuffer.includes(clave)) {
-                const artistName = artistRegistry[clave];
-                saveArtistAuth(artistName);
-                showSystemMessage("💎 ARTIST ACCESS GRANTED: " + artistName);
-                keyBuffer = ""; // Limpiar buffer
-                break; // Salir del loop
+                const artist = artistRegistry[clave];
+                saveArtistAuth(artist.name, artist.type);
+                showSystemMessage("💎 ARTIST ACCESS GRANTED: " + artist.name);
+                keyBuffer = "";
+                break;
             }
         }
     });
