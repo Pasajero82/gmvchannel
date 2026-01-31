@@ -182,20 +182,6 @@
             box-shadow: 0 0 40px rgba(255, 0, 85, 0.8), 0 6px 20px rgba(0, 0, 0, 0.4);
         }
 
-.shortcuts-typing {
-    position: absolute;
-    bottom: 54px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #00ccff;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    text-align: center;
-    white-space: nowrap;
-    min-height: 25px;
-}
         /* --- TOP BAR (MARQUEE) ENHANCED --- */
         .marquee-container { 
             position: absolute; 
@@ -1602,13 +1588,10 @@
             <div class="ring ring-3"></div>
             <img src="logo.png" alt="GMV Logo" class="start-logo">
         </div>
-
 <div style="margin-bottom: 25px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 2px;">
     NETWORK_TRAFFIC: <span id="visit-count" style="color: white;">CONNECTING...</span>
 </div>
-<button class="enter-btn" onclick="startTV()">PLAY</button>
-        
-<div class="shortcuts-typing" id="shortcuts-typing"></div>
+        <button class="enter-btn" onclick="startTV()">PLAY</button>
     </div>
 
 <!-- LOGIN MODAL -->
@@ -2865,84 +2848,6 @@ function loadNewsFeed() {
 loadNewsFeed();
 	loadMessagesFromSheet();
 	loadArtistAuth(); // Cargar artista autenticado si existe
-	// --- TYPING SHORTCUTS EFFECT ---
-const shortcuts = [
-    '<span style="font-weight: 900;">PRESS [1]</span> HIDE UI',
-    '<span style="font-weight: 900;">PRESS [2]</span> STATS',
-    '<span style="font-weight: 900;">PRESS [3]</span> ACHIEVEMENTS',
-    '<span style="font-weight: 900;">PRESS [4]</span> SHARE',
-    '<span style="font-weight: 900;">PRESS [5]</span> ADD FAVORITE',
-    '<span style="font-weight: 900;">PRESS [6]</span> FAVORITES MENU',
-    '<span style="font-weight: 900;">PRESS [7]</span> INJECT SIGNAL',
-    '<span style="font-weight: 900;">PRESS [8]</span> THE WALL',
-    '<span style="font-weight: 900;">PRESS [9]</span> REWARDS'
-];
-
-let currentShortcutIndex = 0;
-let isTyping = false;
-let typingTimeout;
-
-function typeShortcut(text, index, isDeleting) {
-    const element = document.getElementById('shortcuts-typing');
-    if (!element) return;
-    
-    const strippedText = text.replace(/<[^>]*>/g, '');
-    
-    if (isDeleting) {
-        if (index > 0) {
-            let displayText = '';
-            let charCount = 0;
-            let inTag = false;
-            
-            for (let i = 0; i < text.length && charCount < index - 1; i++) {
-                if (text[i] === '<') inTag = true;
-                displayText += text[i];
-                if (text[i] === '>') inTag = false;
-                if (!inTag && text[i] !== '<' && text[i] !== '>') charCount++;
-            }
-            
-            element.innerHTML = displayText + '<span style="opacity: 0.5;">█</span>';
-            typingTimeout = setTimeout(() => typeShortcut(text, index - 1, true), 30);
-        } else {
-            currentShortcutIndex = (currentShortcutIndex + 1) % shortcuts.length;
-            typingTimeout = setTimeout(() => typeShortcut(shortcuts[currentShortcutIndex], 0, false), 500);
-        }
-    } else {
-        if (index <= strippedText.length) {
-            let displayText = '';
-            let charCount = 0;
-            let inTag = false;
-            
-            for (let i = 0; i < text.length && charCount < index; i++) {
-                if (text[i] === '<') inTag = true;
-                displayText += text[i];
-                if (text[i] === '>') inTag = false;
-                if (!inTag && text[i] !== '<' && text[i] !== '>') charCount++;
-            }
-            
-            element.innerHTML = displayText + '<span style="opacity: 0.5;">█</span>';
-            typingTimeout = setTimeout(() => typeShortcut(text, index + 1, false), 50);
-        } else {
-            // Cursor parpadeante cuando termina
-            let blinkCount = 0;
-            const blinkInterval = setInterval(() => {
-                if (blinkCount % 2 === 0) {
-                    element.innerHTML = text + '<span style="opacity: 0.5;">█</span>';
-                } else {
-                    element.innerHTML = text + '<span style="opacity: 0;">█</span>';
-                }
-                blinkCount++;
-                if (blinkCount >= 8) {
-                    clearInterval(blinkInterval);
-                    typingTimeout = setTimeout(() => typeShortcut(text, strippedText.length, true), 500);
-                }
-            }, 250);
-        }
-    }
-}
-
-// Iniciar efecto typing
-setTimeout(() => typeShortcut(shortcuts[0], 0, false), 1000);
 	
 	// Recargar mensajes cada 10 segundos (más tiempo para que Google procese)
 	setInterval(loadMessagesFromSheet, 10000); 
