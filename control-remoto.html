@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GMV REMOTE</title>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+	    transition: background 0.3s ease;
+        }
+
+        /* STATUS BADGE */
+	/* TOP STATUS BAR */
+        .top-status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+            z-index: 100;
+        }
+
+	.user-info {
+    	color: #ff0055; /* Rosa para el prefijo USER: */
+    	font-weight: 600;
+	}
+
+	#remote-username {
+    	color: #00ccff; /* Cyan para que el nombre resalte */
+	}
+
+	.level-tag {
+    	color: #ff0055; /* Rosa para los corchetes y el nivel */
+    	margin-left: 5px;
+    	font-weight: 700;
+	}
+
+        /* Color cuando esté conectado */
+        .top-status-bar.online-mode #status {
+            color: #00ccff;
+            text-shadow: 0 0 8px rgba(0,204,255,0.4);
+        }
+
+        /* REMOTE BODY */
+        .remote {
+            width: 100%;
+            max-width: 340px;
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            border-radius: 35px;
+            margin-top: 20px; 
+    	    padding: 20px 25px 25px; 
+    	    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+    	    margin-bottom: 20px;
+}
+
+        /* D-PAD SECTION */
+        .dpad-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 30px;
+        }
+
+        .dpad-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, #0d0d0d, #000);
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .dpad-btn {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .dpad-btn:active {
+            background: #00ccff;
+            border-color: #00ccff;
+            box-shadow: 0 0 20px rgba(0,204,255,0.6);
+        }
+
+        .dpad-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: rgba(255,255,255,0.7);
+            transition: fill 0.15s;
+        }
+
+        .dpad-btn:active svg {
+            fill: #000;
+        }
+
+        /* Posiciones del D-pad */
+        .dpad-up { top: 10px; left: 50%; transform: translateX(-50%); }
+        .dpad-left { left: 10px; top: 50%; transform: translateY(-50%); }
+        .dpad-right { right: 10px; top: 50%; transform: translateY(-50%); }
+        .dpad-down { bottom: 10px; left: 50%; transform: translateX(-50%); }
+
+        .dpad-up:active { transform: translateX(-50%); }
+        .dpad-left:active { transform: translateY(-50%); }
+        .dpad-right:active { transform: translateY(-50%); }
+        .dpad-down:active { transform: translateX(-50%); }
+
+        /* BOTÓN CENTRAL PLAY/PAUSE */
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #ff0055, #cc0044);
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255,0,85,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .play-btn:active {
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 35px rgba(255,0,85,0.8);
+            background: linear-gradient(135deg, #ff0066, #ff0055);
+        }
+
+        .play-btn svg {
+            width: 26px;
+            fill: #fff;
+        }
+
+        /* FUNCTION BUTTONS GRID */
+        .func-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .func-btn {
+            aspect-ratio: 1;
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+
+        .func-btn:active {
+            background: #00ccff;
+            border-color: #00ccff;
+            box-shadow: 0 0 20px rgba(0,204,255,0.5);
+        }
+
+        .func-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: rgba(255,255,255,0.7);
+            transition: fill 0.15s;
+        }
+
+        .func-btn:active svg {
+            fill: #000;
+        }
+
+        .func-btn .label {
+            font-size: 0.6rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.3px;
+            transition: color 0.15s;
+        }
+
+        .func-btn:active .label {
+            color: #000;
+        }
+
+        .func-btn .key-num {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-size: 0.55rem;
+            color: rgba(255,255,255,0.2);
+            transition: color 0.15s;
+        }
+
+        .func-btn:active .key-num {
+            color: rgba(0,0,0,0.3);
+        }
+
+        /* FAV BUTTON - HIGHLIGHT CON ROSA */
+        .func-btn.fav:active {
+            background: #ff0055;
+            border-color: #ff0055;
+            box-shadow: 0 0 20px rgba(255,0,85,0.6);
+        }
+
+        .func-btn.fav:active svg,
+        .func-btn.fav:active .label,
+        .func-btn.fav:active .key-num {
+            color: #fff;
+            fill: #fff;
+        }
+	/* ESTADO ACTIVO CUANDO ES FAVORITO */
+        .func-btn.fav.is-favorite {
+            background: #ff0055;
+            border-color: #ff0055;
+            box-shadow: 0 0 15px rgba(255,0,85,0.4);
+        }
+	
+/* Botón de voz miniatura para ir junto al ESC */
+.voice-btn {
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 30px;  /* Muy pequeño y discreto */
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.voice-btn svg {
+    width: 14px; /* Icono pequeño */
+    fill: rgba(255, 255, 255, 0.4);
+}
+
+.voice-btn.active {
+    background: #ff0055;
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+    border-color: #fff;
+}
+
+.voice-btn.active svg {
+    fill: #fff;
+}
+
+/* Cuando lo tocas, se pone de un color azul neón */
+.voice-btn.active {
+    background: #00ccff;
+    box-shadow: 0 0 30px rgba(0, 204, 255, 0.8);
+    border-color: #fff;
+}
+
+	.voice-btn svg {
+    	width: 30px;
+    	fill: rgba(255, 255, 255, 0.5);
+	}
+
+	.voice-btn.active svg {
+	fill: #000;
+	}
+
+        .func-btn.fav.is-favorite svg,
+        .func-btn.fav.is-favorite .label {
+            color: #fff;
+            fill: #fff;
+        }
+
+        /* ESC BUTTON - DESTACADO CON ROSA */
+        .func-btn.esc {
+            background: rgba(255,0,85,0.1);
+            border-color: rgba(255,0,85,0.3);
+        }
+
+        .func-btn.esc svg {
+            fill: #ff0055;
+        }
+
+        .func-btn.esc .label {
+            color: #ff0055;
+        }
+
+        .func-btn.esc:active {
+            background: #ff0055;
+            border-color: #ff0055;
+            box-shadow: 0 0 20px rgba(255,0,85,0.6);
+        }
+
+        .func-btn.esc:active svg,
+        .func-btn.esc:active .label {
+            fill: #fff;
+            color: #fff;
+        }
+
+        /* INFO PANEL */
+        .info-panel {
+            width: 100%;
+            max-width: 340px;
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .info-header {
+            display: flex;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: #00ccff;
+            border-bottom-color: #00ccff;
+        }
+
+        .info-content {
+            padding: 20px;
+            min-height: 180px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .stat-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #00ccff;
+        }
+
+        /* KEYBOARD OVERLAY */
+        .keyboard-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .keyboard-overlay.show {
+            display: flex;
+        }
+
+        .keyboard-box {
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .keyboard-title {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #ff0055;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .keyboard-input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #00ccff;
+            color: white;
+            padding: 16px;
+            font-size: 1rem;
+            border-radius: 15px;
+            outline: none;
+            text-align: center;
+        }
+
+        .keyboard-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .kbd-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .kbd-btn.cancel {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .kbd-btn.cancel:active {
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+
+        .kbd-btn.send {
+            background: #ff0055;
+            color: white;
+        }
+
+        .kbd-btn.send:active {
+            background: #ff0066;
+            box-shadow: 0 0 20px rgba(255,0,85,0.6);
+        }
+
+	/* 1. Contenedor de la canción (Entre Status y D-pad) */
+/* CONTENEDOR DE LA MARQUESINA */
+.now-playing-info {
+    width: 100%;
+    margin: 0 0 20px 0;
+    padding: 5px 0;
+    background: rgba(0, 0, 0, 0.3); /* Fondo un poco más oscuro para la "pantalla" */
+    border-radius: 5px;
+    overflow: hidden; /* Corta el texto que se sale del ancho */
+    white-space: nowrap;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* TEXTO LED CON ANIMACIÓN */
+#current-track-name {
+    display: inline-block;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1.5rem; /* El doble de lo anterior (era 0.7rem) */
+    color: #00ccff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding-left: 100%; /* Empieza fuera de la pantalla a la derecha */
+    animation: marquee-led 10s linear infinite; /* Movimiento continuo */
+    text-shadow: 0 0 8px rgba(0, 204, 255, 0.6);
+}
+
+/* LA ANIMACIÓN DE MOVIMIENTO */
+@keyframes marquee-led {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+/* 2. Rediseño del botón ESC (Pequeño y elegante) */
+.esc-row {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 25px; /* Espacio entre D-pad y Funciones */
+}
+
+.esc-pill {
+    background: rgba(255, 0, 85, 0.05);
+    border: 1px solid #ff0055;
+    color: #ff0055;
+    padding: 4px 20px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.esc-pill:active {
+    background: #ff0055;
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+}
+	/* --- ACHIEVEMENT PAGES & DOTS (TRASPLANTADO) --- */
+        .ach-page-remote {
+            display: none !important; /* Esconde todas las páginas por defecto */
+            width: 100%;
+        }
+
+        .ach-page-remote.active {
+            display: block !important; /* Solo muestra la página que tiene la clase 'active' */
+            animation: fadeInPage 0.3s ease forwards;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .remote-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .remote-dot.active {
+            background: #00ccff;
+            width: 22px;
+            height: 14px;
+            border-radius: 7px;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.6);
+        }
+
+	/* ESTILOS GUERRA DE VOTOS */
+        .vote-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 20px;
+        }
+
+        .vote-btn {
+            background: #1a1a1a;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .vote-btn svg {
+            width: 28px;
+            fill: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Voto Up: Cyan */
+        .vote-btn.up:active {
+            background: #00ccff;
+            border-color: #00ccff;
+            box-shadow: 0 0 25px rgba(0,204,255,0.6);
+        }
+
+        /* Voto Down: Rosa */
+        .vote-btn.down:active {
+            background: #ff0055;
+            border-color: #ff0055;
+            box-shadow: 0 0 25px rgba(255,0,85,0.6);
+        }
+
+        .vote-btn:active svg { fill: #000; }
+
+        /* Estado Bloqueado (Crédito agotado para este video) */
+	.vote-btn.disabled {
+    	pointer-events: none; /* Nadie puede volver a hacer clic */
+    	filter: none !important; /* PROHIBIDO EL GRIS */
+    	opacity: 0.8; /* Se ve casi normal, pero bloqueado */
+}
+/* 2. Pulgar arriba: Cyan suave */
+.vote-btn.up.voted {
+    background: rgba(0, 204, 255, 0.15) !important; /* Fondo suave */
+    border-color: rgba(0, 204, 255, 0.5) !important;
+    box-shadow: 0 0 15px rgba(0, 204, 255, 0.2);
+}
+.vote-btn.up.voted svg { 
+    fill: #00ccff !important; /* El icono se pone cyan */
+}
+
+/* 3. Pulgar abajo: Rosa suave */
+.vote-btn.down.voted {
+    background: rgba(255, 0, 85, 0.15) !important; /* Fondo suave */
+    border-color: rgba(255, 0, 85, 0.5) !important;
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+}
+.vote-btn.down.voted svg { 
+    fill: #ff0055 !important; /* El icono se pone rosa */
+}
+    </style>
+</head>
+<body>
+
+    <div class="top-status-bar">
+        <div class="user-info">
+            USER: <span id="remote-username">---</span> 
+            <span id="remote-level" class="level-tag">[---]</span>
+        </div>
+        <div id="status" class="connection-info">CONNECTING...</div>
+    </div>
+
+<div class="remote">
+	<div class="now-playing-info">
+    <div id="current-track-name">NO SIGNAL DETECTED</div>
+</div>
+	<div class="vote-container">
+            <button class="vote-btn up" id="btn-vote-up" onclick="processVote('up')">
+                <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+            </button>
+            <button class="vote-btn down" id="btn-vote-down" onclick="processVote('down')">
+                <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+            </button>
+       </div>
+    <div class="dpad-container">
+        <div class="dpad-bg"></div>
+        
+        <button class="dpad-btn dpad-up" onclick="send('vol-up')">
+            <svg viewBox="0 0 24 24"><path d="M12 8l-6 6h12z"/></svg>
+        </button>
+        
+        <button class="dpad-btn dpad-left" onclick="send('prev')">
+            <svg viewBox="0 0 24 24"><path d="M8 12l6-6v12z"/></svg>
+        </button>
+        
+        <button class="dpad-btn dpad-right" onclick="send('next')">
+            <svg viewBox="0 0 24 24"><path d="M16 12l-6-6v12z"/></svg>
+        </button>
+        
+        <button class="dpad-btn dpad-down" onclick="send('vol-down')">
+            <svg viewBox="0 0 24 24"><path d="M12 16l-6-6h12z"/></svg>
+        </button>
+
+        <button class="play-btn" onclick="send('pause')">
+            <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+    </div>
+<div class="esc-row" style="position: relative;">
+    <button class="esc-pill" onclick="send('esc')">ESC</button>
+<div class="voice-btn" id="voice-trigger-btn" onclick="startVoiceControl()" style="display: inline-flex; vertical-align: middle; margin-left: 10px;">
+    <svg viewBox="0 0 24 24">
+        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+    </svg>
+</div>
+        </div>
+        <div class="func-grid">
+            <button class="func-btn" onclick="send('minimize')">
+                <span class="key-num">1</span>
+                <svg viewBox="0 0 24 24"><path d="M4 11h16v2H4z"/></svg>
+                <span class="label">HIDE</span>
+            </button>
+
+            <button class="func-btn" onclick="send('stats')">
+                <span class="key-num">2</span>
+                <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+                <span class="label">STATS</span>
+            </button>
+
+            <button class="func-btn" onclick="send('achievements')">
+                <span class="key-num">3</span>
+                <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span class="label">AWARDS</span>
+            </button>
+
+            <button class="func-btn" onclick="send('share')">
+                <span class="key-num">4</span>
+                <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+                <span class="label">SHARE</span>
+            </button>
+
+            <button class="func-btn fav" onclick="toggleFavLocal()">
+                <span class="key-num">5</span>
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span class="label">FAV</span>
+            </button>
+
+            <button class="func-btn" onclick="send('fav-menu')">
+                <span class="key-num">6</span>
+                <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
+                <span class="label">LIST</span>
+            </button>
+
+            <button class="func-btn" onclick="openKeyboard()">
+                <span class="key-num">7</span>
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                <span class="label">WALL</span>
+            </button>
+
+            <button class="func-btn" onclick="send('marquee')">
+                <span class="key-num">8</span>
+                <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+                <span class="label">FEED</span>
+            </button>
+
+            <button class="func-btn" onclick="send('rewards')">
+                <span class="key-num">9</span>
+                <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2z"/></svg>
+                <span class="label">VAULT</span>
+            </button>
+
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <div class="info-header">
+            <div class="tab active" onclick="switchTab('stats')">STATS</div>
+            <div class="tab" onclick="switchTab('achievements')">ACHIEVEMENTS</div>
+            <div class="tab" onclick="switchTab('vault')">VAULT</div>
+        </div>
+
+        <div class="info-content">
+            <div class="tab-pane active" id="tab-stats">
+		<div class="stat-item">
+	    	<span class="stat-label">Videos Watched</span>
+    		<span id="remote-videos" class="stat-value">0</span>
+		</div>
+		<div class="stat-item">
+		<span class="stat-label">Watch Time</span>
+    		<span id="remote-time" class="stat-value">0h 0m</span>
+		</div>
+              <div class="stat-item">
+                    <span class="stat-label">Current Streak</span>
+                    <span id="remote-streak" class="stat-value">0 days</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Level</span>
+                    <span id="remote-level-stats" class="stat-value">---</span>
+                </div>
+            </div>
+
+	<div class="tab-pane" id="tab-achievements">
+    <div id="ach-pages-container-remote" style="min-height: 200px;">
+        <div class="stat-item">
+            <span class="stat-label">WAITING FOR SIGNAL...</span>
+        </div>
+    </div>
+    
+    <div id="ach-pagination-remote" style="display: flex; justify-content: center; gap: 20px; margin-top: 15px;">
+    </div>
+</div>
+
+            <div class="tab-pane" id="tab-vault">
+                <div class="stat-item">
+                    <span class="stat-label">Archive 01</span>
+                    <span class="stat-value">🔒 50 req</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Archive 02</span>
+                    <span class="stat-value">🔒 80 req</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Archive 03</span>
+                    <span class="stat-value">🔒 120 req</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="keyboard-overlay" id="keyboardOverlay">
+        <div class="keyboard-box">
+            <div class="keyboard-title">INJECT SIGNAL TO WALL</div>
+            <input type="text" id="muroInput" class="keyboard-input" placeholder="TYPE MESSAGE..." maxlength="100">
+            <div class="keyboard-actions">
+                <button class="kbd-btn cancel" onclick="closeKeyboard()">CANCEL</button>
+                <button class="kbd-btn send" onclick="sendToWall()">SEND</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+const socket = io('https://gmv-server.onrender.com');
+    const urlParams = new URLSearchParams(window.location.search);
+    let roomID = urlParams.get('room');
+    let hasVotedCurrent = false;
+
+    if (!roomID) {
+        document.getElementById('status').innerText = 'ERROR: NO ROOM';
+    } else {
+        socket.emit('join-room', roomID);
+    }
+
+    function send(cmd) {
+        if (!roomID) return;
+        socket.emit('enviar-comando', { cmd, room: roomID, time: Date.now() });
+        if (navigator.vibrate) navigator.vibrate(35);
+    }
+
+    function toggleFavLocal() {
+        const favBtn = document.querySelector('.func-btn.fav');
+        if (!favBtn) return;
+        favBtn.classList.toggle('is-favorite');
+        if (navigator.vibrate) navigator.vibrate(50);
+        send('favorite');
+    }
+
+    function openKeyboard() {
+        document.getElementById('keyboardOverlay').classList.add('show');
+        setTimeout(() => document.getElementById('muroInput').focus(), 100);
+    }
+
+    function closeKeyboard() {
+        document.getElementById('keyboardOverlay').classList.remove('show');
+        document.getElementById('muroInput').value = '';
+    }
+
+    function sendToWall() {
+        const texto = document.getElementById('muroInput').value.trim();
+        if (texto && roomID) {
+            socket.emit('enviar-comando', { cmd: 'muro-broadcast', texto: texto.toUpperCase(), room: roomID });
+            closeKeyboard();
+        }
+    }
+
+    socket.on('connect', () => {
+        document.querySelector('.top-status-bar').classList.add('online-mode');
+        document.getElementById('status').innerText = 'ONLINE : ' + (roomID || 'SEARCHING...');
+        if(roomID) send('sync');
+    });
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        const activeTab = Array.from(document.querySelectorAll('.tab')).find(t => t.innerText.toLowerCase() === tab.toLowerCase());
+        if (activeTab) activeTab.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    socket.on('ejecutar-comando', (data) => {
+        if (data.cmd === 'update-user-data') {
+            document.getElementById('remote-username').innerText = data.username;
+            document.getElementById('remote-level').innerText = "[" + data.level + "]";
+            document.getElementById('remote-videos').innerText = data.totalVideos;
+            document.getElementById('remote-time').innerText = data.watchTime;
+            document.getElementById('remote-streak').innerText = data.streak + " days";
+            document.getElementById('remote-level-stats').innerText = data.level;
+	    if (data.achievements) renderAchievementsRemote(data.achievements);
+            const favBtn = document.querySelector('.func-btn.fav');
+            if (favBtn) data.isFavorite ? favBtn.classList.add('is-favorite') : favBtn.classList.remove('is-favorite');
+        }
+        if (data.cmd === 'update-track') {
+            hasVotedCurrent = false;
+            document.getElementById('btn-vote-up').classList.remove('disabled', 'voted');
+            document.getElementById('btn-vote-down').classList.remove('disabled', 'voted');
+            const trackDisplay = document.getElementById('current-track-name');
+            if (trackDisplay && data.title) trackDisplay.innerText = `${data.artist} - ${data.title}`.toUpperCase();
+        }
+    });
+
+    // --- SISTEMA DE VOZ CORREGIDO ---
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition;
+
+if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = navigator.language || 'es-MX';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+} else {
+    alert("Tu navegador no soporta reconocimiento de voz");
+}
+
+    let audioContext, analyser, dataArray, animationId;
+
+    function visualize() {
+        if (!analyser) return;
+        analyser.getByteFrequencyData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+        let average = sum / dataArray.length;
+
+        const remoteDiv = document.querySelector('.remote');
+        if (remoteDiv) {
+            remoteDiv.style.background = `hsl(${280 + average}, 40%, ${15 + average / 4}%)`;
+            remoteDiv.style.boxShadow = `0 0 ${average}px hsl(${280 + average}, 100%, 50%), 0 20px 60px rgba(0,0,0,0.8)`;
+        }
+        animationId = requestAnimationFrame(visualize);
+    }
+
+async function startVoiceControl() {
+    if (!recognition) {
+        alert('Tu navegador no soporta reconocimiento de voz');
+        return;
+    }
+    
+    document.getElementById('voice-trigger-btn').classList.add('active');
+
+const marquee = document.getElementById('current-track-name');
+marquee.style.animation = 'none';
+marquee.style.paddingLeft = '0';
+marquee.innerText = "LISTENING...";
+
+try {
+    recognition.start();
+} catch(e) {
+    alert("Error: " + e.message);
+}
+}
+
+recognition.onresult = (event) => {
+    const transcript = event.results[event.results.length - 1][0].transcript;
+    const command = transcript.toLowerCase().trim();
+    const marquee = document.getElementById('current-track-name');
+    
+    marquee.innerText = ">> " + transcript.toUpperCase();
+
+    // 1. TOP 10 (COMANDO DEL BOTÓN *)
+    if (command.includes("top 10") || command.includes("top diez") || command.includes("ranking")) {
+        send('top-10'); 
+        marquee.innerText = "✓ TOP 10 GLOBAL";
+    }
+
+    // 2. REPRODUCIR FAVORITOS (PLAY ALL)
+    else if (command.includes("reproducir favoritos") || command.includes("pon mis favoritos")) {
+        send('play-favs'); 
+        marquee.innerText = "✓ PLAYING FAVS";
+    }
+
+    // 3. VOTOS (NEGATIVOS PRIMERO)
+    else if (command.includes("no me gusta") || command.includes("dislike") || command.includes("odio")) {
+        processVote('down');
+        marquee.innerText = "✓ DISLIKE";
+    }
+    else if (command.includes("me gusta") || command.includes("like") || command.includes("encanta") || command.includes("amo")) {
+        processVote('up');
+        marquee.innerText = "✓ LIKE";
+    }
+
+    // 4. FAVORITOS (MENÚ VISUAL)
+    else if (command.includes("lista") || command.includes("ver favoritos") || command.includes("mostrar favoritos")) {
+        send('fav-menu'); 
+        marquee.innerText = "✓ FAV LIST";
+    }
+    else if (command.includes("favorito") || command.includes("añadir")) {
+        toggleFavLocal();
+        marquee.innerText = "✓ FAV UPDATED";
+    }
+
+    // 5. SILENCIO (MUTE)
+    else if (command.includes("silencio") || command.includes("mutear") || command.includes("mute") || command.includes("callar")) {
+        send('mute');
+        marquee.innerText = "✓ MUTE";
+    }
+
+    // 6. NAVEGACIÓN Y OTROS
+    else if (command.includes("siguiente") || command.includes("next")) { send('next'); }
+    else if (command.includes("anterior") || command.includes("atrás")) { send('prev'); }
+    else if (command.includes("pausa") || command.includes("play") || command.includes("pause")) { send('pause'); }
+    else if (command.includes("recompensa") || command.includes("bóveda") || command.includes("vault")) { send('rewards'); switchTab('vault'); }
+    else if (command.includes("estadística") || command.includes("stats")) { send('stats'); switchTab('stats'); }
+    else if (command.includes("muro") || command.includes("wall")) { send('marquee'); }
+    else if (command.includes("escribir") || command.includes("mensaje")) { openKeyboard(); }
+    else if (command.includes("escape") || command.includes("salir") || command.includes("cerrar")) { send('esc'); }
+
+    // 7. BÚSQUEDA POR VOZ (SI NO ES NADA DE LO ANTERIOR)
+    else {
+        marquee.innerText = "🔍 " + transcript.toUpperCase();
+        socket.emit('enviar-comando', { cmd: 'voice-search', query: command, room: roomID });
+    }
+};
+
+recognition.onerror = (event) => {
+    const marquee = document.getElementById('current-track-name');
+    marquee.innerText = "ERROR: " + event.error.toUpperCase();
+};
+
+    recognition.onend = () => {
+        document.getElementById('voice-trigger-btn').classList.remove('active');
+        cancelAnimationFrame(animationId);
+        if (audioContext) audioContext.close();
+
+        const remoteDiv = document.querySelector('.remote');
+        if (remoteDiv) {
+            remoteDiv.style.background = "linear-gradient(145deg, #1a1a1a, #0f0f0f)";
+            remoteDiv.style.boxShadow = "0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)";
+        }
+
+        setTimeout(() => {
+            const marquee = document.getElementById('current-track-name');
+            marquee.style.animation = 'marquee-led 10s linear infinite';
+            marquee.style.paddingLeft = '100%';
+        }, 2000);
+    };
+
+    function processVote(type) {
+        if (hasVotedCurrent) return;
+        hasVotedCurrent = true;
+        const btnUp = document.getElementById('btn-vote-up');
+        const btnDown = document.getElementById('btn-vote-down');
+        type === 'up' ? btnUp.classList.add('voted') : btnDown.classList.add('voted');
+        btnUp.classList.add('disabled');
+        btnDown.classList.add('disabled');
+        socket.emit('enviar-comando', { cmd: 'vote', voteType: type, room: roomID });
+    }
+
+	// --- FUNCIÓN DE LOGROS PAGINADOS (TRASPLANTADO) ---
+	let currentAchPageRemote = 0;
+
+        function renderAchievementsRemote(achList) {
+            const container = document.getElementById('ach-pages-container-remote');
+            const pagination = document.getElementById('ach-pagination-remote');
+            const ACH_PER_PAGE = 4;
+            const totalPages = Math.ceil(achList.length / ACH_PER_PAGE);
+
+            container.innerHTML = '';
+            pagination.innerHTML = '';
+
+            for (let i = 0; i < totalPages; i++) {
+                const page = document.createElement('div');
+                page.className = 'ach-page-remote' + (i === currentAchPageRemote ? ' active' : '');
+                
+                const start = i * ACH_PER_PAGE;
+                const pageAchs = achList.slice(start, start + ACH_PER_PAGE);
+
+                pageAchs.forEach(ach => {
+                    const item = document.createElement('div');
+                    item.className = 'stat-item';
+                    item.innerHTML = `
+                        <span class="stat-label">${ach.icon} ${ach.name}</span>
+                        <span class="stat-value">${ach.unlocked ? '✓' : '🔒'}</span>
+                    `;
+                    page.appendChild(item);
+                });
+                container.appendChild(page);
+
+                // Crear el punto de navegación
+                const dot = document.createElement('div');
+                dot.className = 'remote-dot' + (i === currentAchPageRemote ? ' active' : '');
+                dot.onclick = () => {
+                    currentAchPageRemote = i;
+                    renderAchievementsRemote(achList);
+                };
+                pagination.appendChild(dot);
+            }
+        }
+    </script>
+</body>
+</html>
