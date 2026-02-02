@@ -996,6 +996,7 @@ recognition.onresult = (event) => {
     else if (command.includes("anterior") || command.includes("atrás")) { send('prev'); }
     else if (command.includes("pausa") || command.includes("play") || command.includes("pause")) { send('pause'); }
     else if (command.includes("recompensa") || command.includes("bóveda") || command.includes("vault")) { send('rewards'); switchTab('vault'); }
+else if (command.includes("logros") || command.includes("awards") || command.includes("logro")) { send('achievements'); switchTab('achievements'); marquee.innerText = "✓ AWARDS"; }
     else if (command.includes("estadística") || command.includes("stats")) { send('stats'); switchTab('stats'); }
     else if (command.includes("muro") || command.includes("wall")) { send('marquee'); }
     else if (command.includes("escribir") || command.includes("mensaje")) { openKeyboard(); }
