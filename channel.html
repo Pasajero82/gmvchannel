@@ -4303,6 +4303,19 @@ socket.on('ejecutar-comando', (data) => {
         case 'muro-broadcast':
             if (data.texto) sendSignalToWall(data.texto); 
             break;
+	case 'mute':
+            if (player && player.getVolume) {
+                if (player.getVolume() > 0) {
+                    player.setVolume(0);
+                    document.getElementById('volSlider').value = 0;
+                } else {
+                    player.setVolume(100);
+                    document.getElementById('volSlider').value = 100;
+                }
+            }
+            break;
+        case 'top-10': toggleRanking(); break;
+        case 'play-favs': playAllFavorites(); break;
         case 'esc': 
             closeShareMenu(); 
             closeSignalOverlay(); 
