@@ -679,7 +679,7 @@
             <svg viewBox="0 0 24 24"><path d="M12 16l-6-6h12z"/></svg>
         </button>
 
-        <button class="play-btn" id="play-pause-btn" onclick="send('pause')" oncontextmenu="return false;">
+        <button class="play-btn" id="play-pause-btn" oncontextmenu="return false;">
             <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
     </div>
@@ -1036,24 +1036,25 @@ recognition.onerror = (event) => {
     let longPressTriggered = false;
 
     document.getElementById('play-pause-btn').addEventListener('touchstart', function(e) {
+        e.preventDefault();
         longPressTriggered = false;
         longPressTimer = setTimeout(() => {
             longPressTriggered = true;
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {});
-            } else {
-                document.exitFullscreen();
-            }
+            document.documentElement.requestFullscreen().catch(err => {});
         }, 800);
-    }, { passive: true });
+    }, { passive: false });
 
     document.getElementById('play-pause-btn').addEventListener('touchend', function(e) {
+        e.preventDefault();
         clearTimeout(longPressTimer);
-        if (longPressTriggered) {
-            e.preventDefault();
-            e.stopPropagation();
+        if (!longPressTriggered) {
+            send('pause');
+        } else {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
         }
-    });
+    }, { passive: false });
 
     function processVote(type) {
         if (hasVotedCurrent) return;
