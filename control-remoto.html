@@ -1033,35 +1033,12 @@ recognition.onerror = (event) => {
         }, 2000);
     };
 
-	let longPressTimer = null;
-    let longPressTriggered = false;
-
-    document.getElementById('play-pause-btn').addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        longPressTriggered = false;
-        longPressTimer = setTimeout(() => {
-            longPressTriggered = true;
-            document.documentElement.requestFullscreen().catch(err => {});
-        }, 800);
-    }, { passive: false });
-
-    document.getElementById('play-pause-btn').addEventListener('touchend', function(e) {
-        e.preventDefault();
-        clearTimeout(longPressTimer);
-        if (!longPressTriggered) {
-            send('pause');
-        } else {
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            }
-        }
-    }, { passive: false });
-
 function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e=>{}); else if (document.exitFullscreen) document.exitFullscreen().catch(e=>{}); }
-let longPressTimer = null;
+
+    let longPressTimer = null;
     let longPressActive = false;
-    function startLongPress() { longPressActive = false; longPressTimer = setTimeout(() => { longPressActive = true; toggleFullScreen(); }, 800); }
-    function endLongPress() { clearTimeout(longPressTimer); if (longPressActive) { longPressActive = false; } else { send('pause'); } }
+    function startLongPress(e) { e.preventDefault(); longPressActive = false; longPressTimer = setTimeout(() => { longPressActive = true; toggleFullScreen(); }, 800); }
+    function endLongPress(e) { e.preventDefault(); clearTimeout(longPressTimer); if (!longPressActive) { send('pause'); } longPressActive = false; }
 
     function processVote(type) {
         if (hasVotedCurrent) return;
