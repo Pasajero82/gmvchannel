@@ -639,21 +639,6 @@
     </style>
 </head>
 <body>
-	<script>
-let lastTap = 0;
-document.addEventListener('touchend', function(e) {
-    const now = Date.now();
-    if (now - lastTap < 300) {
-        e.preventDefault();
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } else {
-            document.exitFullscreen();
-        }
-    }
-    lastTap = now;
-});
-</script>
 
     <div class="top-status-bar">
         <div class="user-info">
@@ -699,7 +684,7 @@ document.addEventListener('touchend', function(e) {
         </button>
     </div>
 <div class="esc-row" style="position: relative;">
-    <button class="esc-pill" onclick="send('esc')">ESC</button>
+    <button class="esc-pill" onclick="send('esc')" id="esc-btn">ESC</button>
 <div class="voice-btn" id="voice-trigger-btn" onclick="startVoiceControl()" style="display: inline-flex; vertical-align: middle; margin-left: 10px;">
     <svg viewBox="0 0 24 24">
         <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
@@ -1098,6 +1083,21 @@ recognition.onerror = (event) => {
                 pagination.appendChild(dot);
             }
         }
+	let doubleTapTimer = null;
+document.body.addEventListener('touchstart', function(e) {
+    if (doubleTapTimer) {
+        clearTimeout(doubleTapTimer);
+        doubleTapTimer = null;
+        e.preventDefault();
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {});
+        } else {
+            document.exitFullscreen();
+        }
+    } else {
+        doubleTapTimer = setTimeout(() => { doubleTapTimer = null; }, 300);
+    }
+}, { passive: false });
     </script>
 </body>
 </html>
