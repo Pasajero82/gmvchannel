@@ -679,7 +679,8 @@
             <svg viewBox="0 0 24 24"><path d="M12 16l-6-6h12z"/></svg>
         </button>
 
-        <button class="play-btn" id="play-pause-btn" oncontextmenu="return false;">
+        <button class="play-btn" oncontextmenu="return false;" onmousedown="startLongPress()" onmouseup="endLongPress()" ontouchstart="startLongPress()" ontouchend="endLongPress()">
+
             <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
     </div>
@@ -1055,6 +1056,12 @@ recognition.onerror = (event) => {
             }
         }
     }, { passive: false });
+
+function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e=>{}); else if (document.exitFullscreen) document.exitFullscreen().catch(e=>{}); }
+let longPressTimer = null;
+    let longPressActive = false;
+    function startLongPress() { longPressActive = false; longPressTimer = setTimeout(() => { longPressActive = true; toggleFullScreen(); }, 800); }
+    function endLongPress() { clearTimeout(longPressTimer); if (longPressActive) { longPressActive = false; } else { send('pause'); } }
 
     function processVote(type) {
         if (hasVotedCurrent) return;
