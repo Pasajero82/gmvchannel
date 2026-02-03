@@ -2141,7 +2141,115 @@ body.clean-mode .promo-card {
 #player {
     will-change: transform;
 }
+/* --- ESTILO DE LA BARRA DE VIDEOS GMV (SHELF) --- */
+.custom-shelf {
+    position: absolute;
+    /* 1. La subimos a 100px para que no estorbe abajo */
+    bottom: 0px; 
+    left: 0;
+    width: 100%;
+    /* 2. Le damos más altura (240px) para que el contenido no se apriete */
+    height: 280px; 
+    background: rgba(15, 15, 15, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 58;
+    padding: 20px 20px 40px 20px;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.1s ease;
+}
 
+.custom-shelf.hidden { 
+    /* 2. EL SECRETO: Forzamos que la barra se quede sólida 0.8 segundos */
+    /* y luego desaparezca de golpe (0s de duración) */
+    transition: opacity 0s 0.3s, visibility 0s 0.3s;
+    
+    opacity: 0; 
+    visibility: hidden !important; /* Ganamos al apagón global */
+    
+    transform: none; 
+    pointer-events: none; 
+}
+
+.shelf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+}
+
+.shelf-header span {
+    color: var(--primary); /* Tu rosa neón mexicano */
+    font-size: 1.2rem;
+}
+
+.close-shelf-btn {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 4px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.close-shelf-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.shelf-grid {
+    display: flex;
+    gap: 20px;
+    /* 3. Centramos los videos y quitamos el desplazamiento */
+    justify-content: center; 
+    overflow: hidden; 
+    padding-bottom: 10px;
+}
+
+/* Estilo de cada miniatura */
+.shelf-card {
+    min-width: 180px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.shelf-card:hover { 
+    transform: scale(1.05); 
+}
+
+.shelf-thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--border-subtle);
+    margin-bottom: 8px;
+}
+
+.shelf-card-title {
+    font-size: 0.75rem;
+    color: white;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.shelf-card-artist {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+/* Scrollbar sutil para la barra */
+.shelf-grid::-webkit-scrollbar { height: 4px; }
+.shelf-grid::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 </style>
 </head>
 <body>
@@ -2192,6 +2300,14 @@ body.clean-mode .promo-card {
 
     <div class="tv-frame">
         <div id="player"></div>
+	<div id="custom-pause-shelf" class="custom-shelf hidden">
+    <div class="shelf-header">
+        <span>Generative Music Video | <span style="color: white;">SUGGESTIONS</span></span>
+        <button class="close-shelf-btn" onclick="togglePause()">RESUME PLAYBACK</button>
+    </div>
+    <div id="shelf-items-container" class="shelf-grid">
+        </div>
+</div>
 	<div class="pixel-board-container">
     <div class="marquee-text" id="pixel-board-content">
         ⚠️[SYSTEM] > SIGNAL STABLE◼️◼️◼️[NETWORK] > STANDBY FOR INPUT◼️◼️◼️ /// [GMV] > PRESS 7 TO INJECT SIGNAL◼️◼️◼️⚠️
@@ -3682,17 +3798,55 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-        function onPlayerStateChange(event) {
-	// --- NUEVO: ANTI-ROBO DE FOCO ---
-        // Si el video se pausa o termina, quitamos el foco de YouTube y lo devolvemos a la web
-        if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-            document.activeElement.blur(); // Saca el foco del Iframe
-            window.focus(); // Lo devuelve a tu página
-        }
-        // --------------------------------
-            if (event.data === YT.PlayerState.ENDED) playNextVideo();
-            if (event.data === YT.PlayerState.PLAYING) document.getElementById('playPauseBtn').innerHTML = "⏸";
-        }
+function onPlayerStateChange(event) {
+    const shelf = document.getElementById('custom-pause-shelf');
+
+    if (event.data === YT.PlayerState.PAUSED) {
+        populateCustomShelf();
+        if (shelf) shelf.classList.remove('hidden');
+        
+        document.activeElement.blur(); 
+        window.focus(); 
+        document.getElementById('playPauseBtn').innerHTML = "▶";
+    } 
+    else if (event.data === YT.PlayerState.PLAYING) {
+        if (shelf) shelf.classList.add('hidden');
+        document.getElementById('playPauseBtn').innerHTML = "⏸";
+    }
+    else {
+        if (shelf) shelf.classList.add('hidden');
+        if (event.data === YT.PlayerState.ENDED) playNextVideo();
+    }
+}
+
+// Esta función elige 6 videos al azar de tu playlist.js para mostrarlos en la pausa
+function populateCustomShelf() {
+    const container = document.getElementById('shelf-items-container');
+    if (!container) return;
+    container.innerHTML = ''; // Limpiamos lo que hubiera antes
+    
+    // Mezclamos tus videos y agarramos una muestra de 6
+    const selected = [...musicVideos].sort(() => 0.5 - Math.random()).slice(0, 6);
+
+    selected.forEach(video => {
+        const card = document.createElement('div');
+        card.className = 'shelf-card';
+        
+        // Si haces clic en una miniatura, se reproduce ese video y se cierra la barra
+        card.onclick = () => {
+            playSpecificVideo(video, true);
+            document.getElementById('custom-pause-shelf').classList.add('hidden');
+        };
+        
+        // Construimos el diseño de la miniatura (imagen + título + artista)
+        card.innerHTML = `
+            <img src="https://i.ytimg.com/vi/${video.id}/hqdefault.jpg" class="shelf-thumb">
+            <div class="shelf-card-title">${video.title}</div>
+            <div class="shelf-card-artist">${video.artist}</div>
+        `;
+        container.appendChild(card);
+    });
+}
 
         function onPlayerError(event) { 
             playNextVideo(); 
