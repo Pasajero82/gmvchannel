@@ -944,23 +944,22 @@ input[type=range]::-moz-range-thumb:hover {
 /* --- PANEL DE ESTADÍSTICAS --- */
 #stats-panel {
     position: absolute;
-    top: 76px;
+    top: 90px;
     left: var(--space-lg);
     background: var(--bg-glass);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-lg);
-    padding: 12px 16px;
+    padding: 10px 20px;
     z-index: 80;
-    width: 240px;
+    width: 260px;
     font-family: inherit;
     box-shadow: var(--shadow-xl);
     transform: translateY(-20px);
     opacity: 0;
     pointer-events: none;
     transition: all var(--transition-slow);
-    width: 320px;
 }
 
 #stats-panel.show {
@@ -974,7 +973,7 @@ input[type=range]::-moz-range-thumb:hover {
     font-family: inherit;
     font-size: 0.8rem;
     letter-spacing: 1px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: 700;
     border-bottom: 1px solid var(--border-subtle);
     padding-bottom: 5px;
@@ -983,8 +982,8 @@ input[type=range]::-moz-range-thumb:hover {
 
 .stat-line {
     color: var(--text-primary);
-    font-size: 0.9rem;
-    margin-bottom: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 3px;
     line-height: 1.2;
     font-weight: 400;
     display: flex;
@@ -1003,7 +1002,7 @@ input[type=range]::-moz-range-thumb:hover {
 }
 
 .stats-artists {
-    margin-top: var(--space-lg);
+    margin-top: 10px;
     padding-top: var(--space-md);
     border-top: 1px solid var(--border-subtle);
 }
@@ -1012,14 +1011,14 @@ input[type=range]::-moz-range-thumb:hover {
     color: var(--secondary);
     font-size: 0.75rem;
     font-weight: 700;
-    margin-bottom: var(--space-md);
+    margin-bottom: 2px;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
 .stats-artist-item {
     color: var(--text-secondary);
-    font-size: 0.813rem;
+    font-size: 0.75rem;
     margin-bottom: var(--space-sm);
     font-weight: 400;
     padding: var(--space-xs) 0;
@@ -1035,7 +1034,7 @@ input[type=range]::-moz-range-thumb:hover {
     background: transparent;
     border: 1px solid var(--border-default);
     color: var(--text-primary);
-    padding: var(--space-md);
+    padding: 8px;
     font-family: inherit;
     font-size: 0.75rem;
     font-weight: 700;
@@ -1116,8 +1115,7 @@ input[type=range]::-moz-range-thumb:hover {
 
 .ach-page.active {
     display: block;
-    animation: fadeInPage 0.4s var(--transition-base);
-}
+    }
 
 @keyframes fadeInPage {
     from { opacity: 0; transform: translateX(12px); }
@@ -1941,13 +1939,13 @@ body.clean-mode .promo-card {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
-    width: 300px;
+    width: 280px;
     background: var(--bg-glass);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid var(--accent);
     border-radius: var(--radius-xl);
-    padding: var(--space-lg);
+    padding: 10px 15px;
     z-index: 200;
     font-family: inherit;
     box-shadow: var(--shadow-xl);
@@ -1964,11 +1962,11 @@ body.clean-mode .promo-card {
 
 .ranking-header {
     color: var(--accent);
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-align: center;
-    margin-bottom: var(--space-md);
+    margin-bottom: 5px;
     border-bottom: 1px solid var(--border-subtle);
-    padding-bottom: var(--space-md);
+    padding-bottom: 5px;
     letter-spacing: 1px;
     font-family: inherit;
     font-weight: 700;
@@ -1979,7 +1977,7 @@ body.clean-mode .promo-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-sm) 0;
+    padding: 2px 0;
     border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -2002,7 +2000,7 @@ body.clean-mode .promo-card {
 .rank-artist {
     color: var(--text-primary);
     font-weight: 600;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2016,7 +2014,7 @@ body.clean-mode .promo-card {
 }
 
 .ranking-footer {
-    margin-top: var(--space-md);
+    margin-top: 5px;
     text-align: center;
     font-size: 0.688rem;
     color: var(--text-tertiary);
@@ -2260,10 +2258,8 @@ body.clean-mode .promo-card {
             💾 EXPORT DATA
         </button>
     </div>
-</div>
 
-	<!-- ACHIEVEMENTS PANEL -->
-<div id="achievements-panel">
+</div> <div id="achievements-panel">
     <div class="ach-header">
         <div class="ach-title">🏆 ACHIEVEMENTS</div>
         <div class="ach-counter" id="ach-counter">0/10</div>
@@ -4272,6 +4268,27 @@ socket.on('ejecutar-comando', (data) => {
                 isFavorite: isFavoriteSync,
                 room: myRoom
             });
+            break;
+
+	case 'voice-search':
+            if (data.query) {
+                const busqueda = data.query.toLowerCase().trim();
+                
+                // Buscamos en musicVideos (que ya tiene tus datos de Google Sheets)
+                const coincidencias = musicVideos.filter(v => 
+                    v.artist.toLowerCase().includes(busqueda) || 
+                    v.title.toLowerCase().includes(busqueda)
+                );
+
+                if (coincidencias.length > 0) {
+                   const elegido = coincidencias[Math.floor(Math.random() * coincidencias.length)];
+                    
+                    showSystemMessage("🔍 ENCONTRADO: " + elegido.artist.toUpperCase());
+                    playSpecificVideo(elegido, true); 
+                } else {
+                    showSystemMessage("🚫 NO ENCONTRADO: " + data.query.toUpperCase());
+                }
+            }
             break;
 
 		case 'vote':
