@@ -345,6 +345,7 @@ body {
 }
 
 /* --- BARRA SUPERIOR (GLASSMORPHISM) --- */
+/* 1. La barra gris se mantiene sólida y perfecta de lado a lado */
 .marquee-container { 
     position: absolute; 
     top: 0; 
@@ -356,15 +357,29 @@ body {
     z-index: 60; 
     overflow: hidden; 
     display: flex; 
-    align-items: center;
+    align-items: center; /* Ayuda al centrado base */
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
 }
 
+/* 2. La ventana que define dónde 'nace' el texto (antes de los botones) */
+.marquee-viewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* Ajusta este valor (130px) si el texto sale muy lejos o muy cerca de la estrella */
+    right: 130px; 
+    height: 100%;
+    overflow: hidden;
+}
+
+/* 3. Centrado vertical y corrección de texto cortado */
 .marquee-content { 
     display: inline-block; 
     white-space: nowrap; 
     padding-left: 100%; 
+    /* Agregamos un poco de espacio al final para que no se corte la última letra */
+    padding-right: 50px; 
     animation: marquee 80s linear infinite;
     font-family: inherit;
     font-size: 1.06rem; 
@@ -372,6 +387,9 @@ body {
     text-transform: uppercase;
     font-weight: 500;
     letter-spacing: 1px;
+    
+    /* ESTO CORRIGE EL CENTRADO VERTICAL: debe ser igual a la altura de la barra */
+    line-height: 60px; 
 }
 
 .marquee-content span { 
@@ -391,7 +409,7 @@ body {
     top: 0;
     right: 0;
     display: flex;
-    height: 56px;
+    height: 60px;
     z-index: 65;
     transition: transform var(--transition-slow);
 }
@@ -426,7 +444,7 @@ body {
 
 .fav-menu-btn-top:hover,
 .qr-btn-top:hover {
-    background: rgba(99, 102, 241, 0.08);
+    background: transparent !important;
     color: var(--primary);
 }
 
@@ -2182,8 +2200,12 @@ body.clean-mode .promo-card {
         <div class="vignette"></div>
         <div class="scanlines"></div>
         <div class="crt-effect"></div>
-	<div class="marquee-container" id="tickerBar">
-    <div class="marquee-content" id="newsTicker"></div>
+
+<div class="marquee-container" id="tickerBar">
+    <div class="marquee-viewport">
+        <div class="marquee-content" id="newsTicker"></div>
+    </div>
+
     <div class="top-buttons-group">
         <div class="qr-btn-top" onclick="toggleQRDesdeIcono()" title="Mostrar QR">
             <svg viewBox="0 0 24 24"><path d="M3 11h8V3H3v8zm2-6h4v4H5V5zM3 21h8v-8H3v8zm2-6h4v4H5v-4zM13 3v8h8V3h-8zm6 6h-4V5h4v4zM13 13h2v2h-2v-2zm2 2h2v2h-2v-2zm2-2h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zm0-4h2v2h-2v-2zm2 2h2v2h-2v-2zM13 15h2v2h-2v-2zm2 2h2v2h-2v-2zm0-4h2v2h-2v-2zm2 2h2v2h-2v-2z"/></svg>
@@ -3363,21 +3385,29 @@ if (event.key === '4') {
 }
         });
 
-        function setVolume(val) { 
-            if (player && player.setVolume) player.setVolume(val); 
-	    localStorage.setItem('gmv_volume', val);
-        }
+	function setVolume(val) { 
+    if (player && player.setVolume) {
+        player.setVolume(val); 
+    }
+    // Sincronizamos el slider visual (la bolita rosa)
+    const slider = document.getElementById('volSlider');
+    if (slider) slider.value = val;
+    
+    // Guardamos en la memoria para la próxima visita
+    localStorage.setItem('gmv_volume', val);
+}
 
-        function changeVolume(delta) {
-            if (player && player.getVolume) {
-                let current = player.getVolume();
-                let newVol = current + delta;
-                if (newVol > 100) newVol = 100; 
-                if (newVol < 0) newVol = 0;
-                player.setVolume(newVol);
-                document.getElementById('volSlider').value = newVol;
-            }
-        }
+	function changeVolume(delta) {
+    if (player && player.getVolume) {
+        let current = player.getVolume();
+        let newVol = parseInt(current) + delta; // Aseguramos operación numérica
+        if (newVol > 100) newVol = 100; 
+        if (newVol < 0) newVol = 0;
+        
+        // Llamamos a la función maestra para que guarde y sincronice todo
+        setVolume(newVol);
+    }
+}
 
         function togglePause() {
             if (!player) return;
@@ -3545,15 +3575,18 @@ if (window.YT && window.YT.Player) {
     onYouTubeIframeAPIReady();
 }
 
-        function onPlayerReady(event) {
-            playerReady = true;
-            const savedVol = localStorage.getItem('gmv_volume') || 100;
+	function onPlayerReady(event) {
+    playerReady = true;
     
-    // Aplicamos el volumen al reproductor y al slider visual
-    player.setVolume(savedVol);
-    document.getElementById('volSlider').value = savedVol;
-            console.log("TV Ready");
-        }
+    // Intentamos recuperar el volumen guardado
+    const savedVol = localStorage.getItem('gmv_volume');
+    const finalVol = (savedVol !== null) ? parseInt(savedVol) : 100;
+    
+    // Aplicamos el volumen recuperado a través de nuestra función maestra
+    setVolume(finalVol);
+    
+    console.log("✅ TV READY - Volume restored to:", finalVol);
+}
 
 function startTV() {
     // Verificar si ya tiene username guardado
