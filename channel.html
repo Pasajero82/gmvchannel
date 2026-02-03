@@ -2507,7 +2507,7 @@ body.clean-mode .promo-card {
         }, 100);
     </script>
 
-    <script src="news.js?v=1.1"></script>
+    <script src="news.js"></script>
     <script src="promos.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     
@@ -4368,9 +4368,8 @@ function loadGlobalVisits() {
             });
     }
    
-window.addEventListener('load', () => {
-    loadGlobalVisits();
-loadNewsFeed();
+window.addEventListener('load', loadGlobalVisits);
+
 // --- LÓGICA DE LA TECLA "Q" PARA EL QR ---
 const qrURL = `https://soloparapruebas.netlify.app/control-remoto.html?room=${myRoom}`;
 
