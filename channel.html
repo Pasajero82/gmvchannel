@@ -3365,6 +3365,7 @@ if (event.key === '4') {
 
         function setVolume(val) { 
             if (player && player.setVolume) player.setVolume(val); 
+	    localStorage.setItem('gmv_volume', val);
         }
 
         function changeVolume(delta) {
@@ -3546,7 +3547,11 @@ if (window.YT && window.YT.Player) {
 
         function onPlayerReady(event) {
             playerReady = true;
-            player.setVolume(100);
+            const savedVol = localStorage.getItem('gmv_volume') || 100;
+    
+    // Aplicamos el volumen al reproductor y al slider visual
+    player.setVolume(savedVol);
+    document.getElementById('volSlider').value = savedVol;
             console.log("TV Ready");
         }
 
